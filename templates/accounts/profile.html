@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - EventBook{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+                <!-- Header -->
+                <div class="bg-primary bg-gradient text-white px-4 py-3">
+                    <h4 class="mb-0 fw-semibold">
+                        <i class="fas fa-user-circle me-2"></i> My Profile
+                    </h4>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Personal Information -->
+                        <div class="mb-5">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3">
+                                Personal Information
+                            </h6>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">First Name</label>
+                                    {{ user_form.first_name }}
+                                    <div class="text-danger small">
+                                        {{ user_form.first_name.errors }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Last Name</label>
+                                    {{ user_form.last_name }}
+                                    <div class="text-danger small">
+                                        {{ user_form.last_name.errors }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Email Address</label>
+                                    {{ user_form.email }}
+                                    <div class="text-danger small">
+                                        {{ user_form.email.errors }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    {{ profile_form.phone }}
+                                    <div class="text-danger small">
+                                        {{ profile_form.phone.errors }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Date of Birth</label>
+                                    {{ profile_form.date_of_birth }}
+                                    <div class="text-danger small">
+                                        {{ profile_form.date_of_birth.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Profile Details -->
+                        <div class="mb-4">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3">
+                                Profile Details
+                            </h6>
+
+                            <div class="row g-4 align-items-center">
+                                <div class="col-md-4 text-center">
+                                    {% if user.profile.avatar %}
+                                        <img src="{{ user.profile.avatar.url }}"
+                                             class="rounded-circle img-thumbnail mb-2"
+                                             style="width:120px; height:120px; object-fit:cover;">
+                                    {% else %}
+                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto"
+                                             style="width:120px; height:120px;">
+                                            <i class="fas fa-user fa-3x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label class="form-label">Profile Picture</label>
+                                    {{ profile_form.avatar }}
+                                    <div class="text-danger small">
+                                        {{ profile_form.avatar.errors }}
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Address</label>
+                                    {{ profile_form.address }}
+                                    <div class="text-danger small">
+                                        {{ profile_form.address.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Preferences -->
+                        <div class="mb-4">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3">
+                                Preferences
+                            </h6>
+
+                            <div class="form-check mb-2">
+                                {{ profile_form.receive_notifications }}
+                                <label class="form-check-label">
+                                    Receive booking notifications
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                {{ profile_form.receive_marketing_emails }}
+                                <label class="form-check-label">
+                                    Receive marketing emails
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="text-center pt-3">
+                            <button type="submit"
+                                    class="btn btn-primary px-5 py-2 fw-semibold rounded-pill">
+                                <i class="fas fa-save me-2"></i> Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

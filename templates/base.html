@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}EventBook - Discover Unforgettable Experiences{% endblock %}</title>
+
+    <!-- Meta -->
+    <meta name="description" content="EventBook - Discover and book premium events, concerts, and conferences in Nepal.">
+    <meta name="keywords" content="events, booking, concerts, Nepal, EventBook, luxury, experiences">
+    <meta name="author" content="EventBook">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap / Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Project CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        :root {
+            --primary: #d4af37;
+            --primary-dark: #b9962c;
+            --text-dark: #0b1120;
+            --text-muted: #6b7280;
+            --bg-page: #f3f4f6;
+            --bg-white: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #fef9e7 0, #f9fafb 45%, #eef2ff 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Cinzel', serif;
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.25s ease;
+        }
+
+        .page-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        footer {
+            flex-shrink: 0;
+        }
+
+        /* COMPACT NAVBAR */
+        .compact-navbar {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+            padding-top: 6px;
+            padding-bottom: 6px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .compact-brand {
+            font-size: 1.35rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .brand-icon-mini {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 0, #fff8d7, #b88a1f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #111827;
+        }
+
+        .small-nav-gap .nav-link {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: #4b5563 !important;
+        }
+
+        .small-nav-gap .nav-link:hover,
+        .small-nav-gap .nav-link.active {
+            background: rgba(212, 175, 55, 0.12);
+            color: #111827 !important;
+        }
+
+        .compact-user {
+            padding: 5px 10px !important;
+            font-size: 0.9rem;
+        }
+
+        .btn-nav-outline-compact {
+            border-radius: 8px;
+            padding: 5px 12px;
+            border: 1px solid #d1d5db;
+            font-size: 0.85rem;
+            color: #374151;
+        }
+
+        .btn-nav-outline-compact:hover {
+            border-color: var(--primary);
+            background: #fff8e1;
+        }
+
+        .btn-nav-primary-compact {
+            border-radius: 8px;
+            padding: 6px 13px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: linear-gradient(120deg, var(--primary-dark), var(--primary));
+            border: none;
+            color: white;
+        }
+
+        .messages-wrapper {
+            max-width: 1120px;
+        }
+
+        /* FOOTER */
+        .site-footer {
+            background: #020617;
+            color: #9ca3af;
+            padding: 46px 0 22px;
+            border-top: 1px solid #111827;
+        }
+
+        .site-footer h6 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #e5e7eb;
+            margin-bottom: 0.9rem;
+        }
+
+        .site-footer a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.88rem;
+            color: #9ca3af;
+            margin-bottom: 0.45rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #fef3c7;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-brand-mark {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 0, #fbbf24, #78350f);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #020617;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #1f2937;
+            margin-top: 28px;
+            padding-top: 14px;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        /* SCROLL TO TOP */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #ffffff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 14px 30px rgba(180, 136, 12, 0.45);
+            cursor: pointer;
+        }
+
+        .scroll-top-btn.show {
+            display: flex;
+        }
+
+        /* TOAST MESSAGES */
+        .flash-stack {
+            position: fixed;
+            top: 70px;
+            right: 16px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .flash {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="page-shell">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg compact-navbar">
+        <div class="container">
+            <a class="navbar-brand compact-brand" href="{% url 'events:home' %}">
+                <span class="brand-icon-mini">
+                    <i class="fa-solid fa-ticket"></i>
+                </span>
+                EasyEvents
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center small-nav-gap">
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                           href="{% url 'events:home' %}">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}"
+                           href="{% url 'events:event_list' %}">Events</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                           href="{% url 'about' %}">About</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                           href="{% url 'contact' %}">Contact</a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle compact-user d-flex align-items-center"
+                           href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown">
+
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}"
+                                     class="rounded-circle me-1"
+                                     style="width:28px; height:28px; object-fit:cover;">
+                            {% else %}
+                                <i class="bi bi-person-circle me-1"></i>
+                            {% endif %}
+                            {{ user.username }}
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li><a class="dropdown-item" href="{% url 'bookings:my_bookings' %}">My Bookings</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
+
+                            {% if user.is_staff %}
+                                <li><a class="dropdown-item" href="{% url 'bookings:qr_scanner' %}">Scanner</a></li>
+                                <li><a class="dropdown-item" href="/admin/">Admin Panel</a></li>
+                            {% endif %}
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <form action="{% url 'accounts:logout' %}" method="POST" class="dropdown-item p-0 m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn w-50 text-start">Logout</button>
+                            </form>
+                            
+                        </ul>
+
+                    </li>
+                    {% else %}
+                    <li class="nav-item d-flex align-items-center gap-2 ms-lg-2">
+                        <a href="{% url 'accounts:login' %}" class="btn btn-nav-outline-compact">Login</a>
+                        <a href="{% url 'accounts:register' %}" class="btn btn-nav-primary-compact">Sign up</a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container mt-3 messages-wrapper">
+        {% include 'includes/messages.html' %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container">
+
+            <div class="row g-4">
+
+                <div class="col-lg-4">
+                    <div class="footer-brand mb-2">
+                        <span class="footer-brand-mark"><i class="fa-solid fa-ticket"></i></span>
+                        EasyEvents
+                    </div>
+                    <p class="footer-text mb-2">Discover premium concerts, conferences, and curated events across Nepal.</p>
+                </div>
+
+                <div class="col-lg-2 col-6">
+                    <h6>Explore</h6>
+                    <a href="{% url 'events:home' %}">Home</a>
+                    <a href="{% url 'events:event_list' %}">Events</a>
+                    <a href="{% url 'about' %}">About</a>
+                    <a href="{% url 'contact' %}">Contact</a>
+                </div>
+
+                <div class="col-lg-3 col-6">
+                    <h6>Account</h6>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'bookings:my_bookings' %}">My Bookings</a>
+                        <a href="{% url 'accounts:profile' %}">Profile</a>
+                        {% if user.is_staff %}
+                            <a href="{% url 'bookings:qr_scanner' %}">Scanner</a>
+                            <a href="/admin/">Admin Panel</a>
+                        {% endif %}
+                        <a href="{% url 'accounts:logout' %}">Logout</a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}">Login</a>
+                        <a href="{% url 'accounts:register' %}">Register</a>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-3">
+                    <h6>Contact</h6>
+                    <a><i class="bi bi-geo-alt"></i> Butwal, Nepal</a></br>
+                    <a href="tel:+9779800000000"><i class="bi bi-telephone"></i> +977 9800000000</a>
+                    <a href="mailto:support@eventbook.com"><i class="bi bi-envelope"></i> support@easyevents.com</a>
+                </div>
+
+            </div>
+
+            <div class="footer-bottom mt-4 d-flex justify-content-between">
+                <div>&copy; 2025 EasyEvents. All rights reserved.</div>
+                <div>Crafted with <i class="fa-solid fa-heart"></i></div>
+                <div>by Asim Bashyal and Abhye Verma</div>
+            </div>
+
+        </div>
+    </footer>
+
+    <button class="scroll-top-btn" id="scrollTopBtn">
+        <i class="bi bi-chevron-up"></i>
+    </button>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("scrollTopBtn");
+        if (btn) {
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 200) btn.classList.add("show");
+                else btn.classList.remove("show");
+            });
+            btn.addEventListener("click", () => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+        }
+    });
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

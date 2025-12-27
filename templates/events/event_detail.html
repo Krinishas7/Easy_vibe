@@ -1,0 +1,789 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} - EventBook{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --ev-primary: #d4af37;
+    --ev-primary-dark: #b58c22;
+    --ev-ink: #020617;
+    --ev-muted: #6b7280;
+    --ev-soft: #f9fafb;
+    --ev-border: #e5e7eb;
+}
+
+/* PAGE WRAPPER */
+.event-page {
+    background: radial-gradient(circle at top left, #fef9e7 0, #f9fafb 40%, #e5e7eb 100%);
+}
+
+/* MAIN LAYOUT */
+.event-main-card {
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(229,231,235,0.9);
+    box-shadow: 0 26px 70px rgba(15,23,42,0.18);
+    background: #ffffff;
+}
+
+/* HEADER IMAGE + OVERLAY */
+.event-header-media {
+    position: relative;
+    overflow: hidden;
+}
+
+.event-card-img {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.02);
+    transition: transform 0.4s ease;
+}
+
+.event-header-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15,23,42,0.75), rgba(15,23,42,0.1));
+}
+
+.event-main-card:hover .event-card-img {
+    transform: scale(1.06);
+}
+
+/* CATEGORY + PRICE OVERLAY */
+.event-header-top {
+    position: absolute;
+    inset: 0;
+    padding: 1.2rem 1.4rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.event-header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.event-category-badge {
+    background: rgba(15,23,42,0.85);
+    color: #fef9c3;
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.event-category-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #22c55e;
+}
+
+.event-price-pill {
+    background: radial-gradient(circle at 0 0, #fef9c3, #d4af37);
+    color: #1f2937;
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 14px 30px rgba(161, 98, 7, 0.55);
+}
+
+/* TITLE OVERLAY BOTTOM */
+.event-header-bottom {
+    color: #f9fafb;
+}
+
+.event-title-main {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+}
+
+.event-sub-meta {
+    font-size: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    opacity: 0.9;
+}
+
+.event-sub-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* BODY CONTENT */
+.event-body {
+    padding: 1.6rem 1.8rem 1.6rem;
+}
+
+.event-info-grid {
+    border-radius: 16px;
+    border: 1px solid var(--ev-border);
+    background: #fdfcf8;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.4rem;
+}
+
+.event-info-item {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    margin-bottom: 0.9rem;
+}
+
+.event-info-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fef3c7;
+    color: #92400e;
+    flex-shrink: 0;
+}
+
+.event-info-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #9ca3af;
+    margin-bottom: 0.05rem;
+}
+
+.event-info-value {
+    font-size: 0.9rem;
+    color: var(--ev-ink);
+}
+
+/* DESCRIPTION */
+.event-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ev-ink);
+    margin-bottom: 0.5rem;
+}
+
+.event-description {
+    font-size: 0.97rem;
+    color: var(--ev-muted);
+}
+
+/* MAP */
+#eventMap {
+    height: 320px;
+    border-radius: 16px;
+    margin-top: 0.7rem;
+    overflow: hidden;
+    border: 1px solid var(--ev-border);
+}
+
+/* BOOKING SIDEBAR */
+.booking-shell {
+    position: sticky;
+    top: 90px;
+}
+
+.booking-card {
+    border-radius: 18px;
+    border: 1px solid rgba(229,231,235,0.9);
+    box-shadow: 0 20px 50px rgba(15,23,42,0.18);
+    background: #ffffff;
+}
+
+.booking-header {
+    border-bottom: 1px dashed rgba(229,231,235,0.9);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.booking-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ev-ink);
+}
+
+.booking-sub {
+    font-size: 0.82rem;
+    color: var(--ev-muted);
+}
+
+/* FORM ELEMENTS */
+.booking-form .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+.booking-form .form-control,
+.booking-form .form-select {
+    font-size: 0.9rem;
+    border-radius: 10px;
+}
+
+.ticket-preview {
+    border-radius: 14px;
+    border: 1px dashed rgba(209,213,219,0.9);
+    padding: 0.8rem 0.9rem;
+    background: #fefce8;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.ticket-preview .label {
+    color: #6b7280;
+}
+.ticket-preview .value {
+    font-weight: 600;
+}
+
+.btn-pay {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    border: none;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 14px 30px rgba(22,163,74,0.5);
+}
+.btn-pay:hover {
+    filter: brightness(1.03);
+    transform: translateY(-1px);
+}
+
+/* BOOKING EMPTY STATES */
+.booking-empty-icon {
+    font-size: 2.4rem;
+}
+
+/* STATS CARD */
+.event-stats-card {
+    border-radius: 16px;
+    border: 1px solid var(--ev-border);
+    background: #ffffff;
+}
+
+/* RELATED EVENTS */
+.related-events-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ev-ink);
+}
+
+.related-card {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(229,231,235,0.9);
+    background: #ffffff;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.related-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 45px rgba(15,23,42,0.18);
+    border-color: #facc15;
+}
+
+.related-image {
+    height: 170px;
+    object-fit: cover;
+}
+
+.related-price-badge {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: rgba(15,23,42,0.8);
+    color: #fef9c3;
+}
+
+/* RESPONSIVE */
+@media (max-width: 991.98px) {
+    .event-main-card {
+        border-radius: 18px;
+    }
+    .event-card-img {
+        height: 260px;
+    }
+    .event-body {
+        padding: 1.2rem 1.1rem 1.4rem;
+    }
+    .event-title-main {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .event-card-img {
+        height: 220px !important;
+    }
+    .event-header-top {
+        padding: 0.9rem 1rem;
+    }
+    .event-body {
+        padding: 1.1rem 1rem 1.3rem;
+    }
+    .booking-shell {
+        position: static;
+        margin-top: 1.5rem;
+    }
+    .event-info-grid {
+        padding: 0.9rem;
+    }
+    .related-image {
+        height: 150px;
+    }
+    .btn-pay {
+        font-size: 0.95rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="event-page">
+    <div class="container py-4 py-md-5">
+
+        <div class="row mb-4 mb-md-5 g-4">
+            <!-- LEFT: MAIN EVENT -->
+            <div class="col-lg-8">
+                <div class="event-main-card">
+                    <div class="event-header-media">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="event-card-img" alt="{{ event.title }}">
+                        {% else %}
+                            <img src="/placeholder.svg?height=360&width=800" class="event-card-img" alt="{{ event.title }}">
+                        {% endif %}
+
+                        <div class="event-header-top">
+                            <div class="event-header-top-row">
+                                <div class="event-category-badge">
+                                    <span class="event-category-dot"></span>
+                                    <span>{{ event.category.name }}</span>
+                                </div>
+                                <div class="event-price-pill">
+                                    Rs. {{ event.price }}
+                                </div>
+                            </div>
+
+                            <div class="event-header-bottom mt-auto">
+                                <h1 class="event-title-main mb-1">{{ event.title }}</h1>
+                                <div class="event-sub-meta">
+                                    <span>
+                                        <i class="far fa-calendar-alt"></i>
+                                        {{ event.start_date|date:"M d, Y" }}
+                                    </span>
+                                    <span>
+                                        <i class="far fa-clock"></i>
+                                        {{ event.start_date|date:"g:i A" }} – {{ event.end_date|date:"g:i A" }}
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        {{ event.venue }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-body">
+                        <!-- INFO GRID -->
+                        <div class="event-info-grid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="event-info-item">
+                                        <div class="event-info-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div>
+                                            <div class="event-info-label">Date & Time</div>
+                                            <div class="event-info-value">
+                                                {{ event.start_date|date:"l, F d, Y" }}<br>
+                                                {{ event.start_date|date:"g:i A" }} – {{ event.end_date|date:"g:i A" }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="event-info-item">
+                                        <div class="event-info-icon">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div>
+                                            <div class="event-info-label">Venue</div>
+                                            <div class="event-info-value">
+                                                {{ event.venue }}<br>
+                                                {{ event.address }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="event-info-item">
+                                        <div class="event-info-icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="event-info-label">Organizer</div>
+                                            <div class="event-info-value">
+                                                {{ event.organizer.get_full_name|default:event.organizer.username }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="event-info-item">
+                                        <div class="event-info-icon">
+                                            <i class="fas fa-ticket-alt"></i>
+                                        </div>
+                                        <div>
+                                            <div class="event-info-label">Availability</div>
+                                            <div class="event-info-value">
+                                                {% if event.available_tickets > 0 %}
+                                                    <span class="text-success fw-semibold">{{ event.available_tickets }} tickets available</span>
+                                                {% else %}
+                                                    <span class="text-danger fw-semibold">Sold Out</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DESCRIPTION -->
+                        <div class="mb-3 mb-md-4">
+                            <h3 class="event-section-title">About This Event</h3>
+                            <p class="event-description mb-0">{{ event.description|linebreaks }}</p>
+                        </div>
+
+                        {% if event.latitude and event.longitude %}
+                        <div class="mt-3 mt-md-4">
+                            <h3 class="event-section-title">Event Location</h3>
+                            <div id="eventMap"></div>
+
+                            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+                            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    var lat = {{ event.latitude }};
+                                    var lng = {{ event.longitude }};
+                                    var map = L.map('eventMap').setView([lat, lng], 15);
+
+                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        maxZoom: 19
+                                    }).addTo(map);
+
+                                    L.marker([lat, lng]).addTo(map)
+                                        .bindPopup("{{ event.title|escapejs }}")
+                                        .openPopup();
+                                });
+                            </script>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: BOOKING SIDEBAR -->
+            <div class="col-lg-4">
+                <div class="booking-shell">
+                    <div class="card booking-card booking-form">
+                        <div class="card-body">
+                            <div class="booking-header d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="booking-title">
+                                        <i class="fas fa-ticket-alt me-2 text-warning"></i>Book Your Tickets
+                                    </div>
+                                    <div class="booking-sub">
+                                        Secure, instant confirmation
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if event.is_available %}
+                                {% if user.is_authenticated %}
+                                    {% if seat_types %}
+
+                                    <form action="{% url 'events:book_ticket' event.slug %}" method="post">
+                                        {% csrf_token %}
+
+                                        <div class="mb-3">
+                                            <label for="quantity" class="form-label">Number of Tickets</label>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="quantity"
+                                                   name="quantity"
+                                                   min="1"
+                                                   value="1"
+                                                   inputmode="numeric"
+                                                   pattern="\d*"
+                                                   required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="seat_type" class="form-label">Seat Type</label>
+                                            <select class="form-select" id="seat_type" name="seat_type" required>
+                                                {% for seat in seat_types %}
+                                                    <option value="{{ seat.id }}"
+                                                            data-price="{{ seat.price }}"
+                                                            {% if seat.seats_available == 0 %}disabled{% endif %}>
+                                                        {{ seat.name }} - Rs. {{ seat.price }}
+                                                        {% if seat.seats_available == 0 %}(Sold Out){% endif %}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="contact_name" class="form-label">Contact Name</label>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="contact_name"
+                                                   name="contact_name"
+                                                   value="{{ user.get_full_name }}"
+                                                   required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="contact_email" class="form-label">Contact Email</label>
+                                            <input type="email"
+                                                   class="form-control"
+                                                   id="contact_email"
+                                                   name="contact_email"
+                                                   value="{{ user.email }}"
+                                                   required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="contact_phone" class="form-label">Contact Phone</label>
+                                            <input type="tel"
+                                                   class="form-control"
+                                                   id="contact_phone"
+                                                   name="contact_phone"
+                                                   value="{{ user.profile.phone }}"
+                                                   required>
+                                        </div>
+
+                                        <!-- GPS HIDDEN FIELDS -->
+                                        <input type="hidden" name="user_lat" id="user_lat">
+                                        <input type="hidden" name="user_lng" id="user_lng">
+
+                                        <div class="ticket-preview mt-3">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <span class="label">Seat Price:</span>
+                                                <span class="value" id="seat-price-text">
+                                                    Rs. {{ seat_types.0.price|default:event.price }}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <span class="label">Quantity:</span>
+                                                <span class="value" id="selected-quantity">1</span>
+                                            </div>
+                                            <hr class="my-2">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="label fw-semibold">Total Amount:</span>
+                                                <span class="value fw-bold" id="total-amount">
+                                                    Rs. {{ seat_types.0.price|default:event.price }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit"
+                                                class="btn btn-success btn-pay w-100 mt-3">
+                                            <i class="fas fa-credit-card me-2"></i>Proceed to Payment
+                                        </button>
+                                    </form>
+
+                                    {% else %}
+                                        <p class="text-danger mb-0">
+                                            No seat types configured for this event. Please contact the organizer.
+                                        </p>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="text-center py-2">
+                                        <p class="text-muted mb-3">
+                                            Please login to book tickets for this event.
+                                        </p>
+                                        <a href="{% url 'accounts:login' %}?next={{ request.path }}"
+                                           class="btn btn-primary w-100 mb-2">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Login to Book
+                                        </a>
+                                        <p class="mt-2 small mb-0">
+                                            Don't have an account?
+                                            <a href="{% url 'accounts:register' %}" class="text-decoration-none">
+                                                Register here
+                                            </a>
+                                        </p>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="text-center py-3">
+                                    {% if event.available_tickets == 0 %}
+                                        <i class="fas fa-times-circle booking-empty-icon text-danger mb-2"></i>
+                                        <h5 class="text-danger">Sold Out</h5>
+                                        <p class="text-muted mb-0">This event is completely sold out.</p>
+                                    {% elif event.is_past %}
+                                        <i class="fas fa-clock booking-empty-icon text-warning mb-2"></i>
+                                        <h5 class="text-warning">Event Passed</h5>
+                                        <p class="text-muted mb-0">This event has already ended.</p>
+                                    {% else %}
+                                        <i class="fas fa-ban booking-empty-icon text-danger mb-2"></i>
+                                        <h5 class="text-danger">Not Available</h5>
+                                        <p class="text-muted mb-0">Booking is not available for this event.</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card event-stats-card shadow-sm border-0 mt-3">
+                        <div class="card-body py-3">
+                            <h5 class="card-title fw-bold mb-3">Event Statistics</h5>
+                            <div class="row text-center">
+                                {% comment %} <div class="col-6 mb-3 mb-sm-0">
+                                    <div class="border-end">
+                                        <h4 class="fw-bold text-primary mb-1">{{ event.tickets_sold }}</h4>
+                                        <small class="text-muted">Tickets Sold</small>
+                                    </div>
+                                </div> {% endcomment %}
+                                <div class="col-6">
+                                    <h4 class="fw-bold text-success mb-1">{{ event.available_tickets }}</h4>
+                                    <small class="text-muted">Available</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <!-- booking-shell -->
+            </div>
+        </div>
+
+        {% if related_events %}
+        <div class="row mt-4 mt-md-5">
+            <div class="col-12 d-flex justify-content-between align-items-center mb-3">
+                <h3 class="related-events-title mb-0">Related Events</h3>
+            </div>
+            <div class="row">
+                {% for related_event in related_events %}
+                <div class="col-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+                    <div class="related-card h-100">
+                        <div class="position-relative">
+                            {% if related_event.image %}
+                                <img src="{{ related_event.image.url }}"
+                                     class="card-img-top related-image"
+                                     alt="{{ related_event.title }}">
+                            {% else %}
+                                <img src="/placeholder.svg?height=170&width=300"
+                                     class="card-img-top related-image"
+                                     alt="{{ related_event.title }}">
+                            {% endif %}
+                            <div class="related-price-badge">
+                                Rs. {{ related_event.price }}
+                            </div>
+                        </div>
+                        <div class="card-body d-flex flex-column p-2 p-md-3">
+                            <h6 class="card-title mb-1">{{ related_event.title }}</h6>
+                            <p class="text-muted small flex-grow-1 mb-2">
+                                {{ related_event.description|truncatewords:10 }}
+                            </p>
+                            <div class="mt-auto">
+                                <small class="text-muted d-block mb-2">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ related_event.start_date|date:"M d" }}
+                                </small>
+                                <a href="{{ related_event.get_absolute_url }}"
+                                   class="btn btn-outline-primary btn-sm w-100">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.getElementById('quantity');
+    const seatSelect = document.getElementById('seat_type');
+    const selectedQuantitySpan = document.getElementById('selected-quantity');
+    const totalAmountSpan = document.getElementById('total-amount');
+    const seatPriceText = document.getElementById('seat-price-text');
+    const basePrice = {{ event.price }};
+
+    if (!quantityInput || !seatSelect) return;
+
+    function recalculate() {
+        const raw = quantityInput.value;
+        let quantity = parseInt(raw, 10);
+
+        if (isNaN(quantity) || quantity < 1) {
+            quantity = 1;
+        }
+
+        selectedQuantitySpan.textContent = raw === '' ? '' : quantity;
+
+        const selectedOption = seatSelect.options[seatSelect.selectedIndex];
+        const seatPrice = selectedOption ? parseFloat(selectedOption.dataset.price) : basePrice;
+
+        seatPriceText.textContent = 'Rs. ' + seatPrice.toLocaleString();
+
+        const effectiveQty = raw === '' ? 0 : quantity;
+        const total = effectiveQty * seatPrice;
+        totalAmountSpan.textContent = 'Rs. ' + total.toLocaleString();
+    }
+
+    quantityInput.addEventListener('input', recalculate);
+    seatSelect.addEventListener('change', recalculate);
+    recalculate();
+});
+</script>
+
+<!-- GPS AUTO-DETECTION SCRIPT -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (pos) {
+                document.getElementById("user_lat").value = pos.coords.latitude;
+                document.getElementById("user_lng").value = pos.coords.longitude;
+            },
+            function (err) {
+                console.log("GPS blocked:", err.message);
+            }
+        );
+    }
+});
+</script>
+
+{% endblock %}

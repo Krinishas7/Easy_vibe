@@ -1,0 +1,65 @@
+[
+  {
+    "model": "events.category",
+    "pk": 1,
+    "fields": {
+      "name": "Music",
+      "description": "Concerts, festivals, and musical performances",
+      "created_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "events.category",
+    "pk": 2,
+    "fields": {
+      "name": "Technology",
+      "description": "Tech conferences, workshops, and seminars",
+      "created_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "events.category",
+    "pk": 3,
+    "fields": {
+      "name": "Sports",
+      "description": "Sporting events and competitions",
+      "created_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 1,
+    "fields": {
+      "title": "New Year Music Festival",
+      "description": "Celebrate the new year with amazing music performances from top artists.",
+      "date": "2025-12-31T20:00:00Z",
+      "venue": "Central Park Amphitheater",
+      "address": "Central Park, Kathmandu, Nepal",
+      "price": "1500.00",
+      "total_tickets": 500,
+      "available_tickets": 500,
+      "category": 1,
+      "status": "published",
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 2,
+    "fields": {
+      "title": "Tech Innovation Summit 2025",
+      "description": "Join industry leaders to discuss the future of technology and innovation.",
+      "date": "2025-03-15T09:00:00Z",
+      "venue": "Convention Center",
+      "address": "Bhrikutimandap, Kathmandu, Nepal",
+      "price": "2500.00",
+      "total_tickets": 200,
+      "available_tickets": 200,
+      "category": 2,
+      "status": "published",
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  }
+]

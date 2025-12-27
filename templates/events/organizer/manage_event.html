@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Manage {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <h2 class="mb-3">{{ event.title }}</h2>
+
+    <p>
+        <strong>Status:</strong> {{ event.status|capfirst }} <br>
+        <strong>Tickets Sold:</strong> {{ event.tickets_sold }} / {{ event.total_tickets }}
+    </p>
+
+    <!-- ACTION LINKS -->
+    <div class="mb-4">
+        <a href="{% url 'events:organizer_event_settings' event.id %}" class="btn btn-primary btn-sm">Event Settings</a>
+        <a href="{% url 'events:organizer_promo_codes' event.id %}" class="btn btn-outline-secondary btn-sm">Promo Codes</a>
+        <a href="{% url 'events:organizer_event_report' event.id %}" class="btn btn-success btn-sm">Download Report</a>
+    </div>
+
+    <!-- SEAT TYPES -->
+    <h4>Seat Types</h4>
+    <table class="table table-bordered mt-2">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Total Seats</th>
+                <th>Available</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for seat in seat_types %}
+            <tr>
+                <td>{{ seat.name }}</td>
+                <td>Rs. {{ seat.price }}</td>
+                <td>{{ seat.total_seats }}</td>
+                <td>{{ seat.seats_available }}</td>
+                <td>
+                    <form method="POST" action="{% url 'events:organizer_update_seat' event.id seat.id %}">
+                        {% csrf_token %}
+                        <button name="action" value="increase" class="btn btn-sm btn-success">+</button>
+                        <button name="action" value="decrease" class="btn btn-sm btn-danger">−</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- BOOKINGS -->
+    <h4 class="mt-4">Confirmed Bookings</h4>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Seats</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.booking_id }}</td>
+                <td>{{ booking.contact_name }}</td>
+                <td>{{ booking.contact_email }}</td>
+                <td>{{ booking.quantity }}</td>
+                <td>Rs. {{ booking.total_amount }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No bookings yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

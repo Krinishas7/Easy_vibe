@@ -1,0 +1,599 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Events - EventBook{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --eb-primary: #d4af37;
+        --eb-primary-soft: #fef3c7;
+        --eb-dark: #0f172a;
+        --eb-muted: #6b7280;
+        --eb-border: #e5e7eb;
+    }
+
+    .events-page {
+        padding-top: 24px;
+        padding-bottom: 40px;
+    }
+
+    /* Hero */
+    .events-hero {
+        border-radius: 24px;
+        padding: 26px 22px;
+        background: radial-gradient(circle at 0 0, #fef9c3 0, #f5f3ff 44%, #f9fafb 100%);
+        border: 1px solid rgba(228,228,231,0.8);
+        box-shadow: 0 18px 45px rgba(15,23,42,0.08);
+        margin-bottom: 26px;
+        position: relative;
+        overflow: hidden;
+    }
+    .events-hero::after {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 160px;
+        height: 160px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0, rgba(212,175,55,0.25), transparent 70%);
+    }
+    .events-hero-title {
+        font-size: 2.1rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+    .events-hero-sub {
+        font-size: 0.95rem;
+        color: var(--eb-muted);
+        max-width: 520px;
+    }
+    .events-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        font-size: 0.75rem;
+        background: rgba(15,23,42,0.85);
+        color: #fefce8;
+        margin-bottom: 8px;
+    }
+    .events-hero-badge i {
+        color: var(--eb-primary-soft);
+    }
+    .events-hero-meta {
+        margin-top: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.4rem;
+        font-size: 0.82rem;
+        color: var(--eb-muted);
+    }
+    .events-hero-meta span strong {
+        color: var(--eb-dark);
+    }
+
+    /* Filter card */
+    .events-filter-card {
+        border-radius: 18px;
+        border: 1px solid var(--eb-border);
+        box-shadow: 0 10px 30px rgba(15,23,42,0.06);
+        margin-bottom: 20px;
+    }
+    .events-filter-card .form-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #9ca3af;
+        font-weight: 600;
+    }
+    .events-filter-card .input-group-text {
+        background: #f9fafb;
+        border-radius: 999px 0 0 999px;
+        border-right: none;
+    }
+    .events-filter-card .form-control {
+        border-radius: 0 999px 999px 0;
+        border-left: none;
+        font-size: 0.9rem;
+    }
+    .events-filter-card .form-select {
+        border-radius: 999px;
+        font-size: 0.9rem;
+    }
+    .events-filter-card .btn {
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* Result info */
+    .events-result-info {
+        font-size: 0.88rem;
+        color: var(--eb-muted);
+    }
+    .events-active-filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 999px;
+        padding: 0.25rem 0.6rem;
+        background: #f3f4ff;
+        font-size: 0.78rem;
+        color: #4b5563;
+        margin-left: 0.4rem;
+    }
+
+    /* Event cards */
+    .event-card {
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid var(--eb-border);
+        background: #ffffff;
+        box-shadow: 0 14px 38px rgba(15,23,42,0.09);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .event-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(212,175,55,0.7);
+        box-shadow: 0 22px 48px rgba(15,23,42,0.18);
+    }
+
+    .event-card-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        max-height: 220px;
+    }
+    .event-card-img-wrapper img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        transform: scale(1.01);
+        transition: transform 0.35s ease;
+        display: block;
+    }
+    .event-card:hover .event-card-img-wrapper img {
+        transform: scale(1.06);
+    }
+    .event-card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(15,23,42,0.8), transparent 45%);
+    }
+
+    .event-price-pill {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgba(15,23,42,0.93);
+        color: #f9fafb;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .event-status-pill {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(239,68,68,0.95);
+        color: #fef2f2;
+    }
+
+    .event-card-body {
+        padding: 0.9rem 0.95rem 0.95rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .event-category-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        border-radius: 999px;
+        padding: 0.18rem 0.7rem;
+        background: #f5f3ff;
+        font-size: 0.75rem;
+        color: #4b5563;
+        font-weight: 600;
+    }
+    .event-category-badge i {
+        font-size: 0.8rem;
+        color: #9ca3af;
+    }
+
+    .event-card-title {
+        font-size: 1.02rem;
+        margin-top: 0.4rem;
+        margin-bottom: 0.15rem;
+        font-weight: 700;
+        color: var(--eb-dark);
+    }
+    .event-card-desc {
+        font-size: 0.86rem;
+        color: var(--eb-muted);
+        margin-bottom: 0.45rem;
+    }
+
+    .event-meta-row {
+        font-size: 0.82rem;
+        color: var(--eb-muted);
+    }
+    .event-meta-row div {
+        margin-bottom: 3px;
+    }
+    .event-meta-row i {
+        width: 16px;
+        text-align: center;
+        margin-right: 2px;
+    }
+    .event-meta-row .event-organizer {
+        font-size: 0.78rem;
+        color: #9ca3af;
+        margin-top: 2px;
+    }
+
+    .event-card-footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.45rem;
+    }
+    .event-card-footer .btn {
+        border-radius: 999px;
+        font-size: 0.88rem;
+        padding: 0.45rem 1rem;
+        font-weight: 600;
+    }
+    .tickets-chip {
+        font-size: 0.78rem;
+        border-radius: 999px;
+        padding: 0.2rem 0.6rem;
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+    .tickets-chip.tickets-low {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    .tickets-chip.tickets-soldout {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    /* Empty state */
+    .events-empty-icon {
+        font-size: 3.2rem;
+        color: #d1d5db;
+    }
+
+    /* Pagination */
+    .pagination .page-link {
+        border-radius: 999px !important;
+        margin: 0 3px;
+        border: none;
+        min-width: 36px;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #4b5563;
+    }
+    .pagination .page-item.active .page-link {
+        background: var(--eb-primary);
+        color: #111827;
+        font-weight: 600;
+    }
+
+    @media (max-width: 767px) {
+        .events-hero {
+            padding: 18px 16px;
+            border-radius: 18px;
+        }
+        .events-hero-title {
+            font-size: 1.7rem;
+        }
+        .events-hero-meta {
+            gap: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container events-page">
+
+    <!-- Hero -->
+    <section class="events-hero">
+        <span class="events-hero-badge">
+            <i class="fa-solid fa-bolt"></i>
+            Events in one place
+        </span>
+        <h1 class="events-hero-title">Discover Events</h1>
+        <p class="events-hero-sub">
+            Browse curated concerts, conferences, festivals, and more — find the perfect event for your next night out.
+        </p>
+        <div class="events-hero-meta">
+            <span>Available now: <strong>{{ page_obj.paginator.count }}</strong> event{{ page_obj.paginator.count|pluralize }}</span>
+            <span>Categories: <strong>{{ categories|length }}</strong></span>
+        </div>
+    </section>
+
+    <!-- Search & Filter -->
+    <section class="events-filter-card card">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="search"
+                            name="search"
+                            value="{{ search_query }}"
+                            placeholder="Search by title, venue, organizer, description…">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="fas fa-filter me-1"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Results Info -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <p class="events-result-info mb-0">
+            {% if search_query or selected_category %}
+                Showing <strong>{{ page_obj.paginator.count }}</strong> result{{ page_obj.paginator.count|pluralize }}
+                {% if search_query %}
+                    <span class="events-active-filter-chip">
+                        <i class="fa-solid fa-magnifying-glass"></i> {{ search_query }}
+                    </span>
+                {% endif %}
+                {% if selected_category %}
+                    <span class="events-active-filter-chip">
+                        <i class="fa-solid fa-layer-group"></i> {{ selected_category_name }}
+                    </span>
+                {% endif %}
+            {% else %}
+                Showing <strong>{{ page_obj.paginator.count }}</strong> event{{ page_obj.paginator.count|pluralize }}
+            {% endif %}
+        </p>
+        {% if search_query or selected_category %}
+            <a href="{% url 'events:event_list' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-times me-1"></i>Clear filters
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Events Grid -->
+    <div class="row g-4">
+        {% for event in page_obj %}
+        <div class="col-lg-4 col-md-6">
+            <article class="event-card">
+                <div class="event-card-img-wrapper">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    {% else %}
+                        <img src="/placeholder.svg?height=220&width=400" alt="{{ event.title }}">
+                    {% endif %}
+                    <div class="event-card-overlay"></div>
+
+                    <div class="event-price-pill">
+                        <i class="fas fa-ticket-alt"></i>
+                        Rs. {{ event.price }}
+                    </div>
+
+                    {% if not event.is_available %}
+                        <div class="event-status-pill">
+                            {% if event.available_tickets == 0 %}Sold Out{% else %}Event Passed{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="event-card-body">
+                    <div class="mb-2">
+                        <span class="event-category-badge">
+                            <i class="fas fa-layer-group"></i>
+                            {{ event.category.name }}
+                        </span>
+                    </div>
+
+                    <h2 class="event-card-title">{{ event.title }}</h2>
+                    <p class="event-card-desc">{{ event.description|truncatewords:18 }}</p>
+
+                    <div class="event-meta-row mb-1">
+                        <div>
+                            <i class="fas fa-map-marker-alt text-primary"></i>
+                            {{ event.venue }}
+                        </div>
+
+                        {% if event.latitude and event.longitude %}
+                        <div>
+                            <i class="fas fa-location-arrow text-success"></i>
+                            <span class="event-location"
+                                  data-lat="{{ event.latitude }}"
+                                  data-lng="{{ event.longitude }}"
+                                  id="location-{{ event.id }}">
+                                Loading location...
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <i class="fas fa-calendar text-primary"></i>
+                            {{ event.start_date|date:"M d, Y - g:i A" }}
+                        </div>
+
+                        <div>
+                            <i class="fas fa-user"></i>
+                            <span class="event-organizer">
+                                by {{ event.organizer.get_full_name|default:event.organizer.username }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="event-card-footer">
+                        {% if event.available_tickets > 0 %}
+                            {% if event.available_tickets <= 10 %}
+                                <span class="tickets-chip tickets-low">
+                                    <i class="fas fa-circle me-1" style="font-size: 0.5rem;"></i>
+                                    Only {{ event.available_tickets }} left
+                                </span>
+                            {% else %}
+                                <span class="tickets-chip">
+                                    {{ event.available_tickets }} tickets available
+                                </span>
+                            {% endif %}
+                        {% else %}
+                            <span class="tickets-chip tickets-soldout">
+                                Sold out
+                            </span>
+                        {% endif %}
+
+                        <a href="{{ event.get_absolute_url }}" class="btn btn-dark">
+                            {% if event.is_available %}
+                                View & book
+                            {% else %}
+                                View details
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="events-empty-icon mb-3">
+                <i class="fas fa-calendar-xmark"></i>
+            </div>
+            <h3 class="text-muted mb-2">No events found</h3>
+            <p class="text-muted mb-3">
+                {% if search_query or selected_category %}
+                    Try adjusting your search or browse all available events.
+                {% else %}
+                    New experiences are on the way — check back soon.
+                {% endif %}
+            </p>
+            {% if search_query or selected_category %}
+                <a href="{% url 'events:event_list' %}" class="btn btn-dark">
+                    <i class="fas fa-list me-2"></i>View all events
+                </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-5">
+        <nav aria-label="Events pagination">
+            <ul class="pagination justify-content-center mb-0">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Reverse geocode using Nominatim
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".event-location").forEach(function (el) {
+        const lat = el.dataset.lat;
+        const lng = el.dataset.lng;
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.display_name) {
+                    el.textContent = data.display_name.split(",").slice(0, 3).join(", ");
+                } else {
+                    el.textContent = "Unknown location";
+                }
+            })
+            .catch(() => {
+                el.textContent = "Location error";
+            });
+    });
+});
+</script>
+{% endblock %}

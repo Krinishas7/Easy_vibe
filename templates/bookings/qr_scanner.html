@@ -1,0 +1,460 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .scanner-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+
+    .scanner-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .scanner-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    #videoContainer {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        margin: 2rem auto;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: none;
+        background: #000;
+    }
+
+    #videoContainer.active {
+        display: block;
+    }
+
+    #video {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    #canvas {
+        display: none;
+    }
+
+    .scanner-controls {
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .btn-scanner {
+        padding: 1rem 3rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        margin: 0.5rem;
+    }
+
+    .btn-scanner:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-scanner:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .result-box {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        display: none;
+    }
+
+    .result-box.show {
+        display: block;
+    }
+
+    .debug-box {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        font-family: monospace;
+        font-size: 0.9rem;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .log-entry {
+        padding: 0.5rem;
+        margin: 0.25rem 0;
+        background: white;
+        border-left: 3px solid #667eea;
+        border-radius: 3px;
+    }
+
+    .log-error {
+        border-left-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .log-success {
+        border-left-color: #28a745;
+        background: #f0fff4;
+    }
+
+    .scanning-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 250px;
+        height: 250px;
+        border: 3px solid #28a745;
+        border-radius: 10px;
+        box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="scanner-container">
+    <div class="scanner-header">
+        <h1><i class="fas fa-qrcode"></i> QR Code Scanner</h1>
+        <p>Scan event tickets to verify and admit attendees</p>
+    </div>
+
+    <div class="scanner-controls">
+        <button id="startBtn" class="btn-scanner" onclick="startCamera()">
+            <i class="fas fa-camera"></i> Start Scanner
+        </button>
+        
+        <button id="stopBtn" class="btn-scanner" onclick="stopCamera()" style="display: none; background: #dc3545;">
+            <i class="fas fa-stop"></i> Stop Scanner
+        </button>
+    </div>
+
+    <div id="videoContainer">
+        <video id="video" autoplay playsinline></video>
+        <div class="scanning-overlay"></div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="resultBox" class="result-box"></div>
+
+    <div class="debug-box">
+        <h4><i class="fas fa-terminal"></i> Debug Console</h4>
+        <div id="debugLog"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Using jsQR library for QR code scanning -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<script>
+let stream = null;
+let scanning = false;
+let video = null;
+let canvas = null;
+let canvasContext = null;
+
+function log(message, type = 'info') {
+    const timestamp = new Date().toLocaleTimeString();
+    const logDiv = document.getElementById('debugLog');
+    const logClass = type === 'error' ? 'log-error' : (type === 'success' ? 'log-success' : '');
+    
+    console.log(`[Scanner ${timestamp}]`, message);
+    
+    if (logDiv) {
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${logClass}`;
+        entry.textContent = `[${timestamp}] ${message}`;
+        logDiv.appendChild(entry);
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
+}
+
+window.addEventListener('load', function() {
+    log('Page loaded successfully');
+    video = document.getElementById('video');
+    canvas = document.getElementById('canvas');
+    canvasContext = canvas.getContext('2d');
+    
+    if (typeof jsQR !== 'undefined') {
+        log('✓ jsQR library loaded', 'success');
+    } else {
+        log('✗ jsQR library failed to load', 'error');
+    }
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        log('✓ Camera API supported', 'success');
+    } else {
+        log('✗ Camera API not supported', 'error');
+    }
+});
+
+async function startCamera() {
+    log('Start button clicked');
+    
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const videoContainer = document.getElementById('videoContainer');
+    
+    try {
+        startBtn.disabled = true;
+        startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting Camera...';
+        log('Requesting camera access...');
+        
+        const constraints = {
+            video: {
+                facingMode: { ideal: 'environment' },
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        };
+        
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        log('✓ Camera access granted', 'success');
+        
+        video.srcObject = stream;
+        video.setAttribute('playsinline', true);
+        
+        await video.play();
+        log('✓ Camera started', 'success');
+        
+        videoContainer.classList.add('active');
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-block';
+        
+        scanning = true;
+        requestAnimationFrame(tick);
+        log('✓ Scanner active - point at QR code', 'success');
+        
+    } catch (err) {
+        log('✗ Camera error: ' + err.message, 'error');
+        alert('Unable to access camera!\n\n' +
+              'Error: ' + err.message + '\n\n' +
+              'Please check:\n' +
+              '• Camera permissions are granted\n' +
+              '• You are using HTTPS or localhost\n' +
+              '• Camera is not being used by another app');
+        
+        startBtn.disabled = false;
+        startBtn.innerHTML = '<i class="fas fa-camera"></i> Start Scanner';
+    }
+}
+
+function stopCamera() {
+    log('Stopping camera...');
+    
+    scanning = false;
+    
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    
+    if (video) {
+        video.srcObject = null;
+    }
+    
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const videoContainer = document.getElementById('videoContainer');
+    
+    videoContainer.classList.remove('active');
+    stopBtn.style.display = 'none';
+    startBtn.style.display = 'inline-block';
+    startBtn.disabled = false;
+    startBtn.innerHTML = '<i class="fas fa-camera"></i> Start Scanner';
+    
+    log('✓ Camera stopped', 'success');
+}
+
+function tick() {
+    if (!scanning || !video.readyState === video.HAVE_ENOUGH_DATA) {
+        if (scanning) {
+            requestAnimationFrame(tick);
+        }
+        return;
+    }
+    
+    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth;
+    
+    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+    
+    if (typeof jsQR !== 'undefined') {
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "dontInvert",
+        });
+        
+        if (code) {
+            log('✓ QR Code detected!', 'success');
+            log('QR Data: ' + code.data.substring(0, 50) + '...');
+            
+            scanning = false;
+            verifyTicket(code.data);
+            return;
+        }
+    }
+    
+    requestAnimationFrame(tick);
+}
+
+async function verifyTicket(qrData) {
+    log('Verifying ticket...');
+    
+    try {
+        const response = await fetch('{% url "bookings:verify_ticket_api" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ qr_data: qrData })
+        });
+
+        const data = await response.json();
+        
+        if (data.success && data.valid) {
+            log('✓ Ticket is VALID', 'success');
+            showTicketResult(data);
+        } else {
+            log('✗ Ticket is INVALID: ' + (data.error || 'Unknown error'), 'error');
+            showError(data.error || 'Invalid ticket');
+        }
+        
+    } catch (error) {
+        log('✗ Network error: ' + error.message, 'error');
+        showError('Network error. Please try again.');
+    }
+}
+
+function showTicketResult(data) {
+    const resultBox = document.getElementById('resultBox');
+    const ticket = data.ticket;
+    const event = data.event;
+    const booking = data.booking;
+    
+    const isUsed = ticket.is_used;
+    const statusClass = isUsed ? 'warning' : 'success';
+    const statusIcon = isUsed ? '⚠️' : '✓';
+    const statusText = isUsed ? 'Already Used' : 'Valid Ticket';
+    
+    resultBox.innerHTML = `
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="font-size: 4rem; margin-bottom: 0.5rem;">${statusIcon}</div>
+            <h2 style="margin: 0; color: ${isUsed ? '#ffc107' : '#28a745'};">${statusText}</h2>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+            <h3 style="margin: 0 0 1rem 0;"><i class="fas fa-calendar"></i> ${event.title}</h3>
+            <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${event.date}</p>
+            <p style="margin: 0.5rem 0;"><strong>Venue:</strong> ${event.venue}</p>
+            <p style="margin: 0.5rem 0;"><strong>Seat Type:</strong> ${booking.seat_type_name}</p>
+            <p style="margin: 0.5rem 0;"><strong>Price:</strong> Rs. ${booking.seat_type_price}</p>
+            <p style="margin: 0.5rem 0;"><strong>Attendee:</strong> ${ticket.attendee_name}</p>
+            <p style="margin: 0.5rem 0;"><strong>Email:</strong> ${ticket.attendee_email}</p>
+        </div>
+        
+        <div style="display: flex; gap: 1rem;">
+            ${!isUsed ? `
+            <button onclick="admitAttendee('${ticket.ticket_id}')" 
+                    style="flex: 1; padding: 1rem; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-check-circle"></i> Admit Attendee
+            </button>
+            ` : ''}
+            <button onclick="continueScan()" 
+                    style="flex: 1; padding: 1rem; background: #6c757d; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-redo"></i> Continue Scanning
+            </button>
+        </div>
+    `;
+    
+    resultBox.classList.add('show');
+}
+
+function showError(message) {
+    const resultBox = document.getElementById('resultBox');
+    
+    resultBox.innerHTML = `
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="font-size: 4rem; margin-bottom: 0.5rem; color: #dc3545;">✗</div>
+            <h2 style="margin: 0; color: #dc3545;">Invalid Ticket</h2>
+            <p style="margin: 1rem 0; color: #6c757d;">${message}</p>
+        </div>
+        
+        <button onclick="continueScan()" 
+                style="width: 100%; padding: 1rem; background: #6c757d; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+            <i class="fas fa-redo"></i> Scan Again
+        </button>
+    `;
+    
+    resultBox.classList.add('show');
+}
+
+async function admitAttendee(ticketId) {
+    log('Admitting attendee...');
+    
+    try {
+        const response = await fetch('{% url "bookings:mark_ticket_used" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ ticket_id: ticketId })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            log('✓ Attendee admitted', 'success');
+            alert('✓ Attendee admitted successfully!');
+            continueScan();
+        } else {
+            log('✗ Error: ' + data.error, 'error');
+            alert('Error: ' + data.error);
+        }
+        
+    } catch (error) {
+        log('✗ Network error: ' + error.message, 'error');
+        alert('Network error. Please try again.');
+    }
+}
+
+function continueScan() {
+    log('Continuing scan...');
+    
+    const resultBox = document.getElementById('resultBox');
+    resultBox.classList.remove('show');
+    
+    scanning = true;
+    requestAnimationFrame(tick);
+    log('Scanner resumed');
+}
+</script>
+{% endblock %}

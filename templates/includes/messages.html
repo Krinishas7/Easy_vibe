@@ -1,0 +1,42 @@
+{% if messages %}
+<div class="flash-stack">
+    {% for message in messages %}
+        {% with tag=message.tags|default:'info' %}
+        <div class="flash flash-{{ tag }}" data-flash>
+            <div class="flash-icon">
+                {% if 'success' in tag %}
+                    <i class="fa-solid fa-circle-check"></i>
+                {% elif 'error' in tag or 'danger' in tag %}
+                    <i class="fa-solid fa-circle-xmark"></i>
+                {% elif 'warning' in tag %}
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                {% else %}
+                    <i class="fa-solid fa-circle-info"></i>
+                {% endif %}
+            </div>
+
+            <div class="flash-body">
+                <div class="flash-title">
+                    {% if 'success' in tag %}
+                        Success
+                    {% elif 'error' in tag or 'danger' in tag %}
+                        Error
+                    {% elif 'warning' in tag %}
+                        Warning
+                    {% else %}
+                        Notice
+                    {% endif %}
+                </div>
+                <div class="flash-text">
+                    {{ message }}
+                </div>
+            </div>
+
+            <button class="flash-close" type="button" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        {% endwith %}
+    {% endfor %}
+</div>
+{% endif %}

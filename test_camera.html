@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<button id="startBtn">Start Scanner</button>
+<video id="video" width="300" height="200" autoplay></video>
+<script>
+document.getElementById("startBtn").onclick = async () => {
+  try {
+    console.log("Button clicked, opening camera...");
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    document.getElementById("video").srcObject = stream;
+    console.log("Camera opened successfully!");
+  } catch (err) {
+    console.error("Camera error:", err);
+    alert("Camera error: " + err.message);
+  }
+};
+</script>
+</body>
+</html>

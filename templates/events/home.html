@@ -1,0 +1,978 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - EventVibe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+<style>
+:root {
+    --primary: #2563EB;
+    --secondary: #0EA5E9;
+    --accent: #F97316;
+    --ink: #0F172A;
+    --muted: #6B7280;
+    --soft-bg: #F3F4F6;
+}
+
+.body-home {
+    background: radial-gradient(circle at top left, #EFF6FF 0, #F9FAFB 40%, #EEF2FF 100%);
+}
+
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------------
+   HERO
+------------------------------------------- */
+.hero-wrapper {
+    padding: 60px 0 40px;
+}
+
+.hero-card {
+    background: #FFFFFF;
+    border-radius: 22px;
+    padding: 26px 26px 22px;
+    border: 1px solid rgba(203,213,225,0.8);
+    box-shadow: 0 18px 45px rgba(15,23,42,0.07);
+    position: relative;
+    overflow: hidden;
+    animation: fade-up 0.6s ease-out forwards;
+}
+
+.hero-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 24px;
+    background: radial-gradient(circle at 0 0, rgba(129,140,248,0.18), transparent 55%);
+    pointer-events: none;
+}
+
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.18rem 0.7rem;
+    border-radius: 999px;
+    background: #EEF2FF;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.17em;
+    color: #4F46E5;
+}
+
+.hero-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background-color: #22C55E;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-top: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+.hero-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 460px;
+}
+
+.hero-cta {
+    margin-top: 1.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.hero-cta .btn-primary {
+    border-radius: 999px;
+    padding: 0.7rem 1.7rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
+    border: none;
+}
+
+.hero-cta .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px rgba(37, 99, 235, 0.35);
+}
+
+.hero-cta .btn-outline-secondary {
+    border-radius: 999px;
+    padding: 0.7rem 1.1rem;
+    font-weight: 500;
+    border-color: #E5E7EB;
+    color: var(--muted);
+    background: #FFFFFF;
+}
+
+.hero-cta .btn-outline-secondary:hover {
+    background: #F9FAFB;
+}
+
+.hero-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.4rem;
+    margin-top: 1.9rem;
+    font-size: 0.85rem;
+}
+
+.hero-metric-item span:first-child {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #9CA3AF;
+}
+
+.hero-metric-item span:last-child {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+/* -------------------------------------------
+   HERO HIGHLIGHT SLIDER
+------------------------------------------- */
+.hero-side {
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+}
+
+.heroHighlightSwiper {
+    width: 100%;
+}
+
+.hero-highlight-card {
+    background: #020617;
+    color: #F9FAFB;
+    border-radius: 22px;
+    padding: 14px 14px 12px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 18px 40px rgba(15,23,42,0.35);
+    animation: fade-up 0.7s ease-out forwards;
+}
+
+.hero-highlight-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.9), rgba(129,140,248,0.8));
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.hero-highlight-image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    background: radial-gradient(circle at 10% 0, #1E293B, #020617);
+    min-height: 130px;
+    z-index: 0;
+}
+
+.hero-highlight-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.03);
+    transition: transform 0.4s ease;
+}
+
+.hero-highlight-card:hover .hero-highlight-image {
+    transform: scale(1.07);
+}
+
+.hero-highlight-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15,23,42,0.9), transparent 40%);
+    z-index: 0;
+}
+
+.hero-highlight-label {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: rgba(15,23,42,0.92);
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    z-index: 1;
+}
+
+.hero-highlight-title {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.hero-highlight-content,
+.hero-highlight-footer {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-highlight-content {
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.hero-highlight-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+    gap: 0.5rem;
+}
+
+.hero-highlight-row span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.hero-highlight-footer {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(148,163,184,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+}
+
+.hero-highlight-footer span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.hero-highlight-footer span:first-child {
+    color: #9CA3AF;
+}
+
+/* Highlight slider nav */
+.hero-highlight-next,
+.hero-highlight-prev {
+    color: #E5E7EB;
+}
+
+/* -------------------------------------------
+   FEATURED EVENTS SLIDER
+------------------------------------------- */
+.section-header {
+    margin-bottom: 1.7rem;
+}
+
+.section-header h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+}
+
+.section-header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.swiper {
+    padding-bottom: 40px;
+}
+
+.swiper-slide {
+    height: auto;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #2563EB;
+}
+
+.swiper-pagination-bullet {
+    background: #CBD5F5;
+    opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+    background: #2563EB;
+}
+
+/* event cards */
+.event-card {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #E5E7EB;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+    animation: fade-up 0.5s ease-out forwards;
+}
+
+.event-card:hover {
+    box-shadow: 0 16px 40px rgba(15,23,42,0.15);
+    transform: translateY(-4px);
+    border-color: #BFDBFE;
+}
+
+.event-image-wrapper {
+    position: relative;
+}
+
+.event-image {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+}
+
+/* top badges */
+.event-top-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.location-badge {
+    background: rgba(17,24,39,0.9);
+    color: #F9FAFB;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+}
+
+.location-badge i {
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+}
+
+.price-badge {
+    background: #ECFEFF;
+    color: #0F766E;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* card body */
+.card-body-compact {
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-body-compact h5 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.35rem;
+}
+
+.card-body-compact p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+}
+
+/* meta rows */
+.event-meta {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.event-meta i {
+    font-size: 0.8rem;
+    margin-right: 0.3rem;
+    color: var(--accent);
+}
+
+/* footer */
+.event-card-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+}
+
+.event-card-footer .btn-sm {
+    border-radius: 999px;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.9rem;
+}
+
+/* countdown text */
+.countdown {
+    font-size: 0.8rem;
+    color: #6B7280;
+}
+
+/* -------------------------------------------
+   CATEGORIES
+------------------------------------------- */
+.categories-section {
+    background: #F3F4F6;
+    padding: 40px 0 44px;
+    margin-top: 42px;
+}
+
+.categories-scroller {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+}
+
+.categories-scroller::-webkit-scrollbar {
+    height: 5px;
+}
+
+.categories-scroller::-webkit-scrollbar-thumb {
+    background: #CBD5F5;
+    border-radius: 999px;
+}
+
+.category-pill {
+    border-radius: 999px;
+    border: 1px solid #E5E7EB;
+    padding: 0.75rem 1rem;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 140px;
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.category-pill i {
+    font-size: 1.6rem;
+    color: var(--secondary);
+}
+
+.category-pill span.category-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.category-pill span.category-count {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.category-pill:hover {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(15,23,42,0.08);
+}
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    .hero-card {
+        margin-bottom: 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-wrapper {
+        padding-top: 40px;
+    }
+    .hero-card {
+        padding: 20px 18px 18px;
+    }
+    .hero-sub {
+        max-width: 100%;
+    }
+    .hero-cta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .hero-cta .btn-outline-secondary,
+    .hero-cta .btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ================= CHRISTMAS THEME ADD-ON ================= */
+
+.body-home {
+    position: relative;
+    overflow: hidden;
+}
+
+/* subtle, premium falling snow */
+.xmas-snow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    background-image:
+        radial-gradient(2px 2px at 10px 10px, rgba(255,255,255,0.9) 50%, transparent 51%),
+        radial-gradient(2px 2px at 80px 40px, rgba(255,255,255,0.8) 50%, transparent 51%),
+        radial-gradient(3px 3px at 150px 90px, rgba(255,255,255,0.75) 50%, transparent 51%),
+        radial-gradient(2px 2px at 30px 160px, rgba(255,255,255,0.8) 50%, transparent 51%);
+    background-size: 220px 220px, 260px 260px, 320px 320px, 280px 280px;
+    animation: xmas-snow-fall 28s linear infinite;
+    opacity: 0.55;
+    mix-blend-mode: normal;
+}
+
+@keyframes xmas-snow-fall {
+    0%   { background-position: 0 0, 0 0, 0 0, 0 0; }
+    100% { background-position: 0 700px, 0 900px, 0 1100px, 0 800px; }
+}
+
+/* extra soft red + green glow behind hero card */
+.hero-card::after {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    border-radius: 40px;
+    background:
+        radial-gradient(circle at top left, rgba(248,113,113,0.16), transparent 65%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.16), transparent 60%);
+    z-index: -1;
+}
+
+/* small holiday pill */
+.xmas-pill {
+    background: linear-gradient(120deg, #fee2e2, #bbf7d0);
+    color: #991b1b;
+    border-radius: 999px;
+    padding: 0.12rem 0.6rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.xmas-pill i {
+    font-size: 0.7rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body-home">
+
+    <!-- Christmas snow overlay -->
+    <div class="xmas-snow"></div>
+
+    <!-- HERO -->
+    <section class="hero-wrapper">
+        <div class="container">
+            <div class="row g-4 align-items-stretch">
+                <!-- HIGHLIGHT FIRST ON MOBILE, RIGHT ON DESKTOP -->
+                <div class="col-lg-4 order-1 order-lg-2">
+                    <div class="hero-side h-100">
+                        {% if featured_events %}
+                        <div class="swiper heroHighlightSwiper">
+                            <div class="swiper-wrapper">
+                                {% for event in featured_events %}
+                                <div class="swiper-slide">
+                                    <div class="hero-highlight-card">
+                                        <div class="hero-highlight-image-wrapper">
+                                            {% if event.image %}
+                                                <img src="{{ event.image.url }}" alt="{{ event.title }}"
+                                                     class="hero-highlight-image">
+                                            {% else %}
+                                                <img src="/placeholder.svg?height=160&width=290" alt="Highlight"
+                                                     class="hero-highlight-image">
+                                            {% endif %}
+                                            <div class="hero-highlight-overlay"></div>
+                                            <div class="hero-highlight-label">
+                                                Highlight
+                                            </div>
+                                            <div class="hero-highlight-title">
+                                                {{ event.title|truncatewords:7 }}
+                                            </div>
+                                        </div>
+
+                                        <div class="hero-highlight-content">
+                                            <div class="hero-highlight-row">
+                                                <span>
+                                                    <i class="far fa-calendar-alt"></i>
+                                                    {{ event.start_date|date:"M d, Y" }}
+                                                </span>
+                                                <span>
+                                                    <i class="fas fa-ticket-alt"></i>
+                                                    {{ event.available_tickets }} left
+                                                </span>
+                                            </div>
+                                            <div class="hero-highlight-row">
+                                                <span>
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    {{ event.venue|truncatechars:18 }}
+                                                </span>
+                                                <span>
+                                                    <i class="fas fa-tag"></i>
+                                                    Rs. {{ event.price }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="hero-highlight-footer">
+                                            <span class="countdown"
+                                                  {% if event.start_date %}
+                                                  data-start="{{ event.start_date|date:'c' }}"
+                                                  {% endif %}>
+                                                {% if event.start_date %}
+                                                    Calculating…
+                                                {% else %}
+                                                    Awaiting schedule
+                                                {% endif %}
+                                            </span>
+                                            <span>
+                                                <a href="{{ event.get_absolute_url }}"
+                                                   class="text-decoration-none" style="color:#38BDF8;">
+                                                    View
+                                                    <i class="fas fa-arrow-right ms-1"></i>
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="swiper-button-next hero-highlight-next"></div>
+                            <div class="swiper-button-prev hero-highlight-prev"></div>
+                            <div class="swiper-pagination hero-highlight-pagination"></div>
+                        </div>
+                        {% else %}
+                        <div class="hero-highlight-card">
+                            <div class="hero-highlight-content">
+                                <p>No highlights available.</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- HERO TEXT -->
+                <div class="col-lg-8 order-2 order-lg-1">
+                    <div class="hero-card h-100">
+                        <div class="hero-tag">
+                            <span class="hero-tag-dot"></span>
+                            <span>EventVibe</span>
+                            <span class="xmas-pill d-none d-sm-inline-flex">
+                                <i class="fas fa-snowflake"></i>Holiday
+                            </span>
+                        </div>
+                        <h1 class="hero-title">Discover Amazing Events</h1>
+                        <p class="hero-sub">
+                            Find and book tickets for concerts, festivals, workshops, conferences and more
+                            happening around you.
+                        </p>
+
+                        <div class="hero-cta">
+                            <a href="{% url 'events:event_list' %}" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                                <span>Browse Events</span>
+                            </a>
+                            <a href="{% url 'events:event_list' %}" class="btn btn-outline-secondary">
+                                Highlights this week
+                            </a>
+                        </div>
+
+                        <div class="hero-metrics">
+                            <div class="hero-metric-item">
+                                <span>Active Events</span>
+                                <span>{{ featured_events|length }}+</span>
+                            </div>
+                            <div class="hero-metric-item">
+                                <span>Categories</span>
+                                <span>{{ categories|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED EVENTS SLIDER -->
+    <section class="py-4">
+        <div class="container">
+
+            <div class="section-header d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2>Featured Events</h2>
+                    <p>Swipe through this week’s top picks</p>
+                </div>
+                {% if featured_events %}
+                <a href="{% url 'events:event_list' %}" class="btn btn-link p-0" style="font-size:0.9rem;">
+                    View all <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+                {% endif %}
+            </div>
+
+            {% if featured_events %}
+            <div class="swiper featuredSwiper">
+                <div class="swiper-wrapper">
+                    {% for event in featured_events %}
+                    <div class="swiper-slide">
+                        <div class="event-card h-100">
+                            <div class="event-image-wrapper">
+                                {% if event.image %}
+                                    <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-image">
+                                {% else %}
+                                    <img src="/placeholder.svg?height=210&width=400" alt="{{ event.title }}" class="event-image">
+                                {% endif %}
+                                <div class="event-top-badges">
+                                    <div class="location-badge">
+                                        <i class="fas fa-map-pin"></i>{{ event.venue }}
+                                    </div>
+                                    <div class="price-badge">
+                                        Rs. {{ event.price }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body-compact">
+                                <h5>{{ event.title }}</h5>
+                                <p>{{ event.description|truncatewords:18 }}</p>
+
+                                <div class="event-meta">
+                                    <i class="far fa-calendar-alt"></i>
+                                    {{ event.start_date|date:"M d, Y" }}
+                                </div>
+                                <div class="event-meta">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    {{ event.available_tickets }} tickets left
+                                </div>
+
+                                <div class="event-card-footer">
+                                    <span class="countdown"
+                                          {% if event.start_date %}
+                                          data-start="{{ event.start_date|date:'c' }}"
+                                          {% endif %}>
+                                        {% if event.start_date %}
+                                            Calculating…
+                                        {% else %}
+                                            No date
+                                        {% endif %}
+                                    </span>
+                                    <a href="{{ event.get_absolute_url }}" class="btn btn-sm btn-primary">
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="swiper-button-next featured-next"></div>
+                <div class="swiper-button-prev featured-prev"></div>
+                <div class="swiper-pagination featured-pagination"></div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-times" style="font-size: 3rem; color: #D1D5DB;"></i>
+                <p class="lead text-muted mt-3 mb-0">No events available at the moment.</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- CATEGORIES (SCROLLABLE ON MOBILE) -->
+    <section class="categories-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Browse by Category</h2>
+                <p>Quickly find events that match your interests</p>
+            </div>
+
+            <!-- Desktop grid -->
+            <div class="row g-3 d-none d-md-flex justify-content-center">
+                {% for category in categories %}
+                <div class="col-lg-2 col-md-3">
+                    <a href="{% url 'events:event_list' %}?category={{ category.id }}" class="text-decoration-none">
+                        <div class="category-pill">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span class="category-name">{{ category.name }}</span>
+                            <span class="category-count">{{ category.events.count }} events</span>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center text-muted">
+                    No categories defined.
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Mobile horizontal scroll -->
+            <div class="categories-scroller d-flex d-md-none">
+                {% for category in categories %}
+                <a href="{% url 'events:event_list' %}?category={{ category.id }}" class="text-decoration-none">
+                    <div class="category-pill">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="category-name">{{ category.name }}</span>
+                        <span class="category-count">{{ category.events.count }} events</span>
+                    </div>
+                </a>
+                {% empty %}
+                <span class="text-muted">No categories defined.</span>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    function updateCountdowns() {
+        const nodes = document.querySelectorAll(".countdown[data-start]");
+        const now = new Date().getTime();
+
+        nodes.forEach(el => {
+            const startStr = el.getAttribute("data-start");
+            if (!startStr) return;
+
+            const startTime = new Date(startStr).getTime();
+            if (isNaN(startTime)) {
+                el.textContent = "Invalid date";
+                return;
+            }
+
+            const diff = startTime - now;
+
+            if (diff <= 0) {
+                el.textContent = "Event started";
+                return;
+            }
+
+            const totalSeconds = Math.floor(diff / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            const h = hours.toString().padStart(2, "0");
+            const m = minutes.toString().padStart(2, "0");
+            const s = seconds.toString().padStart(2, "0");
+
+            let text = "Starts in ";
+            if (days > 0) {
+                text += days + "d " + h + "h " + m + "m " + s + "s";
+            } else {
+                text += h + "h " + m + "m " + s + "s";
+            }
+
+            el.textContent = text;
+        });
+    }
+
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
+
+    // Highlight slider (auto-slide)
+    new Swiper(".heroHighlightSwiper", {
+        slidesPerView: 1,
+        spaceBetween: 10,
+        loop: true,
+        grabCursor: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: ".hero-highlight-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".hero-highlight-next",
+            prevEl: ".hero-highlight-prev",
+        }
+    });
+
+    // Featured slider (manual only)
+    new Swiper(".featuredSwiper", {
+        slidesPerView: 1.05,
+        spaceBetween: 16,
+        loop: false,
+        grabCursor: true,
+        pagination: {
+            el: ".featured-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".featured-next",
+            prevEl: ".featured-prev",
+        },
+        breakpoints: {
+            576: { slidesPerView: 1.3 },
+            768: { slidesPerView: 2.1 },
+            992: { slidesPerView: 3 },
+        }
+    });
+});
+</script>
+{% endblock %}

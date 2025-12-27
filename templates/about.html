@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - EventBook{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --about-primary: #d4af37;
+    --about-primary-soft: #fef3c7;
+    --about-dark: #020617;
+    --about-muted: #6b7280;
+    --about-border: #e5e7eb;
+    --about-bg-soft: #f9fafb;
+}
+
+/* Shared */
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto;
+    background: radial-gradient(circle at 30% 0, #fefce8, #facc15);
+    color: #854d0e;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.hover-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(15,23,42,0.12);
+    border-color: rgba(212,175,55,0.45) !important;
+}
+
+.text-accent {
+    color: var(--about-primary) !important;
+}
+
+/* HERO */
+.lux-hero {
+    background: radial-gradient(circle at top left, #fef9e7 0, #f9fafb 45%, #e5e7eb 100%);
+    border-bottom: 1px solid rgba(229,231,235,0.7);
+}
+.lux-hero-inner {
+    background: rgba(255,255,255,0.86);
+    border-radius: 24px;
+    padding: 34px 28px;
+    box-shadow: 0 24px 60px rgba(15,23,42,0.12);
+    border: 1px solid rgba(229,231,235,0.9);
+}
+.lux-hero h1 {
+    font-size: 2.3rem;
+    color: var(--about-dark);
+}
+.lux-hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.8rem;
+    border-radius: 999px;
+    background: #0f172a;
+    color: #fefce8;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.7rem;
+    margin-bottom: 0.6rem;
+}
+.lux-hero-tag-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #22c55e;
+}
+.lux-hero p.lead {
+    color: var(--about-muted);
+    max-width: 480px;
+}
+
+.lux-hero .btn-primary {
+    background: linear-gradient(135deg, #facc15, var(--about-primary));
+    color: #111827;
+    border: none;
+    border-radius: 999px;
+    padding: 0.7rem 1.9rem;
+    font-weight: 600;
+    box-shadow: 0 14px 35px rgba(180, 137, 26, 0.45);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+.lux-hero .btn-primary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+    box-shadow: 0 18px 40px rgba(161, 117, 18, 0.55);
+}
+
+.lux-hero img {
+    max-width: 90%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(15,23,42,0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.lux-hero img:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px rgba(15,23,42,0.35);
+}
+
+/* STORY SECTION */
+.about-story-title {
+    font-size: 1.9rem;
+}
+.about-story-text {
+    font-size: 0.96rem;
+    color: var(--about-muted);
+}
+
+/* WHY CHOOSE US */
+.about-why {
+    background: var(--about-bg-soft);
+}
+.about-feature-card {
+    border-radius: 18px;
+    border: 1px solid var(--about-border);
+    background: #ffffff;
+}
+
+/* STATS */
+.about-stats-wrap {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.about-stat-card {
+    border-radius: 18px;
+    padding: 1.4rem 0.9rem;
+    background: #ffffff;
+    border: 1px solid rgba(229,231,235,0.9);
+    box-shadow: 0 10px 28px rgba(15,23,42,0.05);
+}
+.about-stat-value {
+    font-size: 2rem;
+    color: var(--about-primary);
+}
+@media (min-width: 768px) {
+    .about-stat-value {
+        font-size: 2.4rem;
+    }
+}
+@media (min-width: 1200px) {
+    .about-stat-value {
+        font-size: 2.8rem;
+    }
+}
+
+/* CTA */
+.bg-light-cta {
+    background: radial-gradient(circle at top, #fff7ed 0, #f9fafb 35%, #e5e7eb 100%);
+}
+.bg-light-cta h2 {
+    font-size: 1.8rem;
+}
+.bg-light-cta .btn-primary {
+    background: linear-gradient(135deg, #facc15, var(--about-primary));
+    border: none;
+    border-radius: 999px;
+    padding-inline: 1.8rem;
+}
+.bg-light-cta .btn-outline-primary {
+    border-radius: 999px;
+    border-width: 1px;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .lux-hero h1 {
+        font-size: 2rem;
+        text-align: center;
+    }
+    .lux-hero p.lead {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .lux-hero .btn-primary {
+        display: block;
+        margin: 0 auto;
+    }
+    .lux-hero-inner {
+        padding: 26px 18px;
+    }
+    .lux-hero img {
+        max-width: 100%;
+        margin-top: 18px;
+    }
+}
+
+@media (max-width: 767px) {
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+    }
+    .hover-lift .card-body {
+        padding: 2rem 1.5rem !important;
+    }
+    .bg-light-cta h2 {
+        font-size: 1.6rem;
+    }
+}
+
+/* General card text */
+.card p {
+    font-size: 0.95rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="lux-hero py-5">
+    <div class="container py-4">
+        <div class="lux-hero-inner">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-6 text-center text-lg-start">
+                    <div class="lux-hero-tag">
+                        <span class="lux-hero-tag-dot"></span>
+                        <span>About EasyEvents</span>
+                    </div>
+                    <h1 class="display-4 fw-bold mb-3 text-dark">
+                        About <span class="text-accent">EasyEvents</span>
+                    </h1>
+                    <p class="lead mb-4">
+                        Your premier destination for discovering and booking unforgettable experiences across Nepal.
+                    </p>
+                    <a href="{% url 'events:event_list' %}" class="btn btn-primary btn-lg shadow-sm mb-2 mb-lg-0">
+                        <i class="fas fa-calendar-alt me-2"></i> Discover Events
+                    </a>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="{% static 'images/EV.png' %}"
+                         class="img-fluid"
+                         alt="About EventBook">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5 px-3">
+            <h2 class="fw-bold text-dark mb-3 about-story-title">Our Story</h2>
+            <p class="about-story-text mx-auto" style="max-width: 720px;">
+                Founded with a vision to revolutionize event experiences in Nepal, EventBook connects people 
+                with extraordinary moments through an effortless booking journey.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 about-feature-card shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-5">
+                        <div class="icon-circle mb-4">
+                            <i class="bi bi-bullseye"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-3">Our Mission</h4>
+                        <p class="text-muted">
+                            To connect people with unforgettable experiences by providing 
+                            a seamless, secure, and joyful platform for event discovery and booking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 about-feature-card shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-5">
+                        <div class="icon-circle mb-4">
+                            <i class="bi bi-eye"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-3">Our Vision</h4>
+                        <p class="text-muted">
+                            To become Nepal’s most trusted and loved event platform — empowering organizers 
+                            and delighting audiences with effortless access to experiences.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5 about-why">
+    <div class="container">
+        <div class="text-center mb-5 px-3">
+            <h2 class="fw-bold text-dark mb-3">
+                Why Choose <span class="text-accent">EasyEvents?</span>
+            </h2>
+            <p class="text-muted mx-auto" style="max-width: 700px;">
+                Every feature we build is designed to make your event journey simple, secure, and special.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            {% for item in features %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 about-feature-card shadow-sm h-100 hover-lift text-center p-4">
+                    <div class="icon-circle mx-auto mb-3">
+                        <i class="{{ item.icon }} fa-2x"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-3">{{ item.title }}</h5>
+                    <p class="text-muted">{{ item.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark mb-2">Our Impact</h2>
+            <p class="text-muted mb-0" style="max-width: 620px; margin: 0 auto;">
+                A growing community of events, organizers, and attendees trusting EventBook for their experiences.
+            </p>
+        </div>
+
+        <div class="row g-3 about-stats-wrap">
+            <div class="col-6 col-md-3">
+                <div class="about-stat-card">
+                    <h2 class="about-stat-value fw-bold mb-1">10K+</h2>
+                    <p class="text-muted mb-0">Events Hosted</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="about-stat-card">
+                    <h2 class="about-stat-value fw-bold mb-1">50K+</h2>
+                    <p class="text-muted mb-0">Happy Attendees</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="about-stat-card">
+                    <h2 class="about-stat-value fw-bold mb-1">500+</h2>
+                    <p class="text-muted mb-0">Trusted Organizers</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="about-stat-card">
+                    <h2 class="about-stat-value fw-bold mb-1">20+</h2>
+                    <p class="text-muted mb-0">Cities Covered</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-light-cta text-center text-dark">
+    <div class="container px-3">
+        <h2 class="fw-bold mb-3">Join Nepal’s Leading Event Community</h2>
+        <p class="lead mb-4" style="max-width: 620px; margin: 0 auto;">
+            Discover, book, and enjoy events effortlessly with EasyEvents.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'events:event_list' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm mb-2">
+                <i class="fas fa-calendar-alt me-2"></i> Browse Events
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg rounded-pill mb-2">
+                <i class="fas fa-user-plus me-2"></i> Sign Up Free
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

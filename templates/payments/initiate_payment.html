@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment - EventVibe{% endblock %}
+
+{% block extra_css %}
+<style>
+/* General styling */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+/* Card container */
+.card {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+/* Card headers */
+.card-header {
+    border-radius: 15px 15px 0 0;
+}
+.card-header h4, .card-header h5 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Icon circle */
+.icon-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 12px;
+}
+
+/* Booking and contact info boxes */
+.booking-box, .contact-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.booking-box h5, .contact-box h5 {
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Payment summary */
+.payment-summary {
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+.payment-summary .d-flex span {
+    font-weight: 500;
+}
+.payment-summary hr {
+    border-top: 1px solid rgba(255,255,255,0.5);
+}
+
+/* Payment method cards */
+.payment-method-card .card {
+    border-radius: 12px;
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.payment-method-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+.payment-method-card img {
+    height: 50px;
+    object-fit: contain;
+}
+
+/* Buttons */
+.btn-lg {
+    min-width: 160px;
+    font-weight: 600;
+    border-radius: 50px;
+}
+
+/* Security alert */
+.alert {
+    border-radius: 12px;
+}
+.alert .fa-2x {
+    font-size: 1.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .d-flex.justify-content-between > div {
+        margin-bottom: 10px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-0">  <!-- Removed top padding -->
+    
+    <!-- Header -->
+    <div class="text-center mb-4 mt-2">  <!-- Reduced margins -->
+        <h2 class="fw-bold mb-1">Complete Your Payment</h2>
+        <p class="text-muted mb-0">Securely pay for your tickets and enjoy your event!</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <!-- Booking & Contact Info -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="booking-box">
+                        <h5><i class="fas fa-ticket-alt me-2"></i>Booking Details</h5>
+                        <p><strong>Event:</strong> {{ booking.event.title }}</p>
+                        <p><strong>Date:</strong> {{ booking.event.start_date|date:"M d, Y - g:i A" }}</p>
+                        <p><strong>Venue:</strong> {{ booking.event.venue }}</p>
+                        <p><strong>Quantity:</strong> {{ booking.quantity }} ticket{{ booking.quantity|pluralize }}</p>
+                        <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="contact-box">
+                        <h5><i class="fas fa-user me-2"></i>Contact Information</h5>
+                        <p><strong>Name:</strong> {{ booking.contact_name }}</p>
+                        <p><strong>Email:</strong> {{ booking.contact_email }}</p>
+                        <p><strong>Phone:</strong> {{ booking.contact_phone }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="payment-summary">
+                <h5 class="mb-3"><i class="fas fa-credit-card me-2"></i>Payment Summary</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Ticket Price</span>
+                    <span>Rs. {{ booking.event.price }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Quantity</span>
+                    <span>{{ booking.quantity }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Service Fee</span>
+                    <span>Rs. 0.00</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fs-5 fw-bold">
+                    <span>Total Amount</span>
+                    <span>Rs. {{ booking.total_amount }}</span>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <h5 class="mb-3"><i class="fas fa-wallet me-2"></i>Choose Payment Method</h5>
+
+            <!-- eSewa -->
+            <div class="payment-method-card mb-3">
+                <div class="card border-success">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <img src="/placeholder.svg?height=50&width=100&text=eSewa" alt="eSewa" class="me-3">
+                            <div>
+                                <h6 class="fw-bold mb-1">eSewa Digital Wallet</h6>
+                                <small class="text-muted">Pay securely with your eSewa account</small>
+                            </div>
+                        </div>
+                        <form action="{{ esewa_url }}" method="POST" id="esewa-form">
+                            {% for key, value in esewa_data.items %}
+                                <input type="hidden" name="{{ key }}" value="{{ value }}">
+                            {% endfor %}
+                            <button type="submit" class="btn btn-success btn-lg mt-2 mt-md-0">
+                                <i class="fas fa-wallet me-2"></i>Pay with eSewa
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coming Soon Methods -->
+            <div class="payment-method-card mb-3">
+                <div class="card border-secondary">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <img src="/placeholder.svg?height=50&width=100&text=Khalti" class="me-3">
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Khalti Digital Wallet</h6>
+                                <small class="text-muted">Coming Soon</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-lg" disabled>
+                            <i class="fas fa-clock me-2"></i>Coming Soon
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-method-card mb-3">
+                <div class="card border-secondary">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-university fa-2x text-muted me-3"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Bank Transfer</h6>
+                                <small class="text-muted">Coming Soon</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-lg" disabled>
+                            <i class="fas fa-clock me-2"></i>Coming Soon
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="alert alert-info mt-4 d-flex align-items-center">
+                <i class="fas fa-shield-alt fa-2x me-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-1">Secure Payment</h6>
+                    <small>Your payment information is encrypted and secure. You will be redirected to eSewa's secure gateway.</small>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-4">
+                <a href="{% url 'bookings:booking_detail' booking.booking_id %}" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Booking
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const esewaForm = document.getElementById('esewa-form');
+    if (esewaForm) {
+        esewaForm.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Redirecting...';
+            submitBtn.disabled = true;
+        });
+    }
+});
+</script>
+{% endblock %}
