@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}QR Scanner Guide - EventVibe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <i class="fas fa-qrcode fa-4x text-primary mb-3"></i>
+                <h1 class="display-4 fw-bold mb-3">QR Scanner User Guide</h1>
+                <p class="lead text-muted">Complete step-by-step guide to scanning and verifying tickets</p>
+            </div>
+
+            <!-- Quick Start Card -->
+            <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white p-4">
+                    <h3 class="mb-3"><i class="fas fa-bolt me-2"></i>Quick Start</h3>
+                    <ol class="mb-0 ps-3">
+                        <li class="mb-2">Login as staff member</li>
+                        <li class="mb-2">Click "QR Scanner" in your profile menu</li>
+                        <li class="mb-2">Allow camera access when prompted</li>
+                        <li class="mb-2">Click "Start Scanner" button</li>
+                        <li class="mb-2">Point camera at ticket QR code</li>
+                        <li>Review result and admit if valid</li>
+                    </ol>
+                    <a href="{% url 'bookings:qr_scanner' %}" class="btn btn-light mt-3">
+                        <i class="fas fa-qrcode me-2"></i>Open Scanner Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Step-by-Step Guide -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="mb-4"><i class="fas fa-list-ol me-2 text-primary"></i>Detailed Steps</h2>
+
+                    <!-- Step 1 -->
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h4 class="text-primary mb-3">
+                            <span class="badge bg-primary me-2">1</span>Access the Scanner
+                        </h4>
+                        <p>Navigate to the QR Scanner from your profile dropdown menu (staff only).</p>
+                        <div class="alert alert-info text-break">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Direct URL:</strong> <code>http://127.0.0.1:8000/bookings/scanner/</code>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h4 class="text-primary mb-3">
+                            <span class="badge bg-primary me-2">2</span>Grant Camera Permissions
+                        </h4>
+                        <p>When prompted, click "Allow" to grant camera access to your browser.</p>
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6><i class="fab fa-chrome me-2"></i>Desktop Browser</h6>
+                                        <small>Click "Allow" in the popup. If blocked, click the camera icon in the address bar.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-mobile-alt me-2"></i>Mobile Device</h6>
+                                        <small>Tap "Allow" in the system prompt. Check Settings &gt; Browser &gt; Permissions if denied.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h4 class="text-primary mb-3">
+                            <span class="badge bg-primary me-2">3</span>Start Scanning
+                        </h4>
+                        <p>Click the "Start Scanner" button and wait for the camera to initialize (2-3 seconds).</p>
+                        <ul class="mt-2">
+                            <li>Camera feed will appear</li>
+                            <li>Scanning frame visible in center</li>
+                            <li>Button changes to "Stop Scanner"</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h4 class="text-primary mb-3">
+                            <span class="badge bg-primary me-2">4</span>Scan QR Codes
+                        </h4>
+                        <p>Point your camera at the QR code on the ticket:</p>
+                        <ul class="mt-2">
+                            <li>Center the QR code in the frame</li>
+                            <li>Keep distance of 10-30cm (4-12 inches)</li>
+                            <li>Ensure good lighting</li>
+                            <li>Hold device steady</li>
+                            <li>Scanner automatically detects and reads</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="mb-4">
+                        <h4 class="text-primary mb-3">
+                            <span class="badge bg-primary me-2">5</span>Review Results
+                        </h4>
+                        <p>After scanning, a result card appears showing ticket status:</p>
+                        
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <div class="card border-success">
+                                    <div class="card-body">
+                                        <h6 class="text-success"><i class="fas fa-check-circle me-2"></i>Valid Ticket</h6>
+                                        <small>Green card - Click "Admit Attendee" to allow entry</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-warning">
+                                    <div class="card-body">
+                                        <h6 class="text-warning"><i class="fas fa-exclamation-triangle me-2"></i>Already Used</h6>
+                                        <small>Orange card - Ticket already scanned, deny entry</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-danger">
+                                    <div class="card-body">
+                                        <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>Invalid Ticket</h6>
+                                        <small>Red card - Ticket not found or cancelled, deny entry</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="mb-4"><i class="fas fa-tools me-2 text-warning"></i>Troubleshooting</h2>
+                    <div class="accordion" id="troubleshootingAccordion">
+
+                        <!-- Camera Issues -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#camera">
+                                    Camera Not Working
+                                </button>
+                            </h2>
+                            <div id="camera" class="accordion-collapse collapse show" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Check browser permissions in settings</li>
+                                        <li>Try a different browser (Chrome recommended)</li>
+                                        <li>Restart the browser</li>
+                                        <li>Ensure no other app is using the camera</li>
+                                        <li>Clean the camera lens</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scanning Issues -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#scanning">
+                                    QR Code Not Scanning
+                                </button>
+                            </h2>
+                            <div id="scanning" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Ensure QR code is fully visible in frame</li>
+                                        <li>Improve lighting (avoid glare and shadows)</li>
+                                        <li>Hold device steady</li>
+                                        <li>Try different angles and distances</li>
+                                        <li>Check if QR code is damaged or distorted</li>
+                                        <li>Increase screen brightness if scanning from phone</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Network Issues -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#network">
+                                    Verification Issues
+                                </button>
+                            </h2>
+                            <div id="network" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Check internet connection</li>
+                                        <li>Refresh the page and try again</li>
+                                        <li>Verify ticket in admin panel manually</li>
+                                        <li>Contact support if issue persists</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="mb-4"><i class="fas fa-star me-2 text-success"></i>Best Practices</h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-check text-success me-2"></i>Do's</h5>
+                            <ul>
+                                <li>Test scanner before event starts</li>
+                                <li>Keep device charged</li>
+                                <li>Position in well-lit area</li>
+                                <li>Verify attendee ID for security</li>
+                                <li>Keep scan history for reference</li>
+                                <li>Report suspicious tickets</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-times text-danger me-2"></i>Don'ts</h5>
+                            <ul>
+                                <li>Don't share scanner access</li>
+                                <li>Don't scan too quickly</li>
+                                <li>Don't admit invalid tickets</li>
+                                <li>Don't forget to log out</li>
+                                <li>Don't ignore network issues</li>
+                                <li>Don't leave device unattended</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-white p-4 text-center">
+                    <h3 class="mb-3"><i class="fas fa-life-ring me-2"></i>Need Help?</h3>
+                    <p class="mb-3">Our support team is here to assist you</p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="mailto:support@eventvibe.com" class="btn btn-light">
+                            <i class="fas fa-envelope me-2"></i>Email Support
+                        </a>
+                        <a href="tel:+1234567890" class="btn btn-light">
+                            <i class="fas fa-phone me-2"></i>Call Support
+                        </a>
+                        <a href="{% url 'bookings:qr_scanner' %}" class="btn btn-light">
+                            <i class="fas fa-qrcode me-2"></i>Open Scanner
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

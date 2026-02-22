@@ -1,0 +1,131 @@
+<footer class="bg-light border-top py-4 mt-5">
+    <div class="container">
+        <div class="row g-4">
+
+            <!-- Brand & Social -->
+            <div class="col-lg-4 col-md-6">
+                <h5 class="fw-bold mb-3 text-dark">
+                    <i class="bi bi-calendar-event me-2"></i>EventBook
+                </h5>
+                <p class="text-secondary mb-3">
+                    Your premier destination for discovering and booking amazing events. 
+                    Join thousands of satisfied customers today!
+                </p>
+                <div class="social-links">
+                    <a href="#" class="btn btn-light btn-sm border me-2">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="#" class="btn btn-light btn-sm border me-2">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="#" class="btn btn-light btn-sm border me-2">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="#" class="btn btn-light btn-sm border">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6">
+                <h6 class="fw-bold mb-3 text-dark">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a href="{% url 'events:home' %}" class="text-secondary text-decoration-none">
+                            <i class="bi bi-arrow-right me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="{% url 'events:event_list' %}" class="text-secondary text-decoration-none">
+                            <i class="bi bi-arrow-right me-1"></i>Browse Events
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="{% url 'about' %}" class="text-secondary text-decoration-none">
+                            <i class="bi bi-arrow-right me-1"></i>About Us
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="{% url 'contact' %}" class="text-secondary text-decoration-none">
+                            <i class="bi bi-arrow-right me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- My Account -->
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-3 text-dark">My Account</h6>
+                <ul class="list-unstyled">
+                    {% if user.is_authenticated %}
+                        <li class="mb-2">
+                            <a href="{% url 'bookings:my_bookings' %}" class="text-secondary text-decoration-none">
+                                <i class="bi bi-arrow-right me-1"></i>My Bookings
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'accounts:profile' %}" class="text-secondary text-decoration-none">
+                                <i class="bi bi-arrow-right me-1"></i>Profile
+                            </a>
+                        </li>
+                        {% if user.is_staff %}
+                        <li class="mb-2">
+                            <a href="/admin/" class="text-secondary text-decoration-none">
+                                <i class="bi bi-arrow-right me-1"></i>Admin Panel
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="mb-2">
+                            <a href="{% url 'accounts:login' %}" class="text-secondary text-decoration-none">
+                                <i class="bi bi-arrow-right me-1"></i>Login
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'accounts:register' %}" class="text-secondary text-decoration-none">
+                                <i class="bi bi-arrow-right me-1"></i>Register
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-3 text-dark">Contact Info</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-geo-alt text-dark me-2"></i>
+                        <span class="text-secondary">Butwal, Nepal</span>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-telephone text-dark me-2"></i>
+                        <a href="tel:+9779800000000" class="text-secondary text-decoration-none">
+                            +977 9800000000
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-envelope text-dark me-2"></i>
+                        <a href="mailto:support@eventbook.com" class="text-secondary text-decoration-none">
+                            support@eventbook.com
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                <p class="text-secondary mb-0">&copy; 2025 EventBook. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <a href="{% url 'terms' %}" class="text-secondary text-decoration-none me-3">Terms of Service</a>
+                <a href="{% url 'privacy' %}" class="text-secondary text-decoration-none">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>

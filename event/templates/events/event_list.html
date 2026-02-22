@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Events - EventBook{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Discover Events</h1>
+        <p class="lead text-muted">Find the perfect event for you</p>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Search Events</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}" placeholder="Search by title, venue, or description...">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-muted mb-0">
+            {% if search_query or selected_category %}
+                Showing {{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }}
+                {% if search_query %}for "{{ search_query }}"{% endif %}
+                {% if selected_category %}in {{ selected_category_name }}{% endif %}
+            {% else %}
+                Showing {{ page_obj.paginator.count }} event{{ page_obj.paginator.count|pluralize }}
+            {% endif %}
+        </p>
+        {% if search_query or selected_category %}
+            <a href="{% url 'events:event_list' %}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times me-1"></i>Clear Filters</a>
+        {% endif %}
+    </div>
+
+    <!-- Events Grid -->
+    <div class="row g-4">
+        {% for event in page_obj %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="position-relative">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                    {% else %}
+                        <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="{{ event.title }}">
+                    {% endif %}
+                    <div class="badge bg-primary position-absolute top-0 end-0 m-2">Rs. {{ event.price }}</div>
+                    {% if not event.is_available %}
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.7);">
+                            <span class="badge bg-danger fs-6">
+                                {% if event.available_tickets == 0 %}Sold Out{% else %}Event Passed{% endif %}
+                            </span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="mb-2">
+                        <span class="badge bg-secondary">{{ event.category.name }}</span>
+                    </div>
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text text-muted flex-grow-1">{{ event.description|truncatewords:15 }}</p>
+
+                    <div class="mb-3 small text-muted">
+                        <i class="fas fa-map-marker-alt me-1 text-primary"></i>{{ event.venue }}<br>
+                        <i class="fas fa-calendar me-1 text-primary"></i>{{ event.start_date|date:"M d, Y - g:i A" }}<br>
+                        <i class="fas fa-ticket-alt me-1 text-primary"></i>
+                        {% if event.available_tickets > 0 %}
+                            {{ event.available_tickets }} tickets available
+                        {% else %}
+                            <span class="text-danger">Sold out</span>
+                        {% endif %}<br>
+                        <i class="fas fa-user me-1 text-primary"></i>by {{ event.organizer.get_full_name|default:event.organizer.username }}
+                    </div>
+
+                    <a href="{{ event.get_absolute_url }}" class="btn btn-primary mt-auto">
+                        {% if event.is_available %}View Details & Book{% else %}View Details{% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-calendar-times fa-5x text-muted mb-3"></i>
+            <h3 class="text-muted">No Events Found</h3>
+            <p class="lead text-muted">
+                {% if search_query or selected_category %}Try adjusting your search criteria or browse all events.{% else %}Check back later for new events!{% endif %}
+            </p>
+            {% if search_query or selected_category %}
+                <a href="{% url 'events:event_list' %}" class="btn btn-primary"><i class="fas fa-list me-2"></i>View All Events</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-5">
+        <nav aria-label="Events pagination">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}"><i class="fas fa-angle-double-left"></i></a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}"><i class="fas fa-angle-left"></i></a>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}"><i class="fas fa-angle-right"></i></a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}"><i class="fas fa-angle-double-right"></i></a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

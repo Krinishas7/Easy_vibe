@@ -1,0 +1,92 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 py-lg-3">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold text-warning d-flex align-items-center" href="{% url 'events:home' %}">
+            <i class="fas fa-ticket-alt me-1"></i>EventVibe
+        </a>
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'events:home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}" href="{% url 'events:event_list' %}">Events</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">Contact</a>
+                </li>
+            </ul>
+
+            <!-- User/Profile Section -->
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        {% if user.profile.image %}
+                            <img src="{{ user.profile.image.url }}" alt="Profile" class="rounded-circle me-2" style="width:32px; height:32px; object-fit:cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle me-2 text-warning" style="font-size:1.5rem;"></i>
+                        {% endif %}
+                        {{ user.get_full_name|default:user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end rounded-3 shadow-sm">
+                        <!-- Profile Link -->
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <!-- My Bookings -->
+                        <li>
+                            <a class="dropdown-item" href="{% url 'bookings:my_bookings' %}">
+                                <i class="fas fa-ticket-alt me-2"></i>My Bookings
+                            </a>
+                        </li>
+                        <!-- Admin / Staff Links -->
+                        {% if user.is_staff %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'bookings:qr_scanner' %}">
+                                <i class="fas fa-qrcode me-2"></i>QR Scanner
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/admin/">
+                                <i class="fas fa-cog me-2"></i>Admin Panel
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <!-- Logout -->
+                        <li>
+                            <form method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item text-start" style="border: none; background: none; cursor: pointer;">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <!-- Login / Sign Up -->
+                <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
+                <li class="nav-item ms-2">
+                    <a class="btn btn-warning btn-sm text-white" href="{% url 'accounts:register' %}">Sign Up</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

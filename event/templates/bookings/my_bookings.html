@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Bookings - EventBook{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    padding: 60px 0 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Small left-aligned title */
+.hero-title {
+    font-size: 2rem; /* smaller than display-3 */
+    color: #FFD700;  /* golden color */
+    text-align: left;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+/* Hero lead text */
+.hero-section .lead {
+    opacity: 0.9;
+}
+
+/* Ticket icon */
+.hero-section i {
+    font-size: 120px;
+    color: rgba(255, 255, 255, 0.1);
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Card Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* Booking Cards */
+.card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Status badges */
+.status-badge {
+    padding: 0.3rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.status-confirmed { background: #4ade80; color: #065f46; }
+.status-pending { background: #fcd34d; color: #78350f; }
+.status-cancelled { background: #f87171; color: #7f1d1d; }
+
+/* Buttons */
+.btn-custom {
+    border-radius: 12px;
+    padding: 0.65rem 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* No Bookings Card */
+.no-bookings-card {
+    background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+.no-bookings-card i {
+    font-size: 4rem;
+    color: var(--accent);
+}
+
+/* Pagination */
+.pagination .page-link {
+    border-radius: 50% !important;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px;
+    transition: all 0.3s ease;
+}
+.pagination .page-item.active .page-link {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+.pagination .page-link:hover {
+    background: var(--secondary);
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="hero-title" style="color: #92400E; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">My Bookings</h2>
+                <p class="lead">Manage your event bookings and download your tickets</p>
+            </div>
+            <div class="col-lg-4 text-end d-none d-lg-block">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Cards -->
+<div class="container" style="margin-top: -40px;">
+    <div class="row">
+        {% for booking in page_obj %}
+        <div class="col-12 mb-4" style="animation: fadeInUp 0.6s ease-out {{ forloop.counter0|add:'0.2' }}s; animation-fill-mode: both;">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <div class="col-md-3">
+                            <div style="position: relative; height: 100%; min-height: 200px;">
+                                {% if booking.event.image %}
+                                    <img src="{{ booking.event.image.url }}" 
+                                         style="width: 100%; height: 100%; object-fit: cover;" alt="{{ booking.event.title }}">
+                                {% else %}
+                                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80" 
+                                         style="width: 100%; height: 100%; object-fit: cover;" alt="{{ booking.event.title }}">
+                                {% endif %}
+                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.3));"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="p-4">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-6 mb-3 mb-lg-0">
+                                        <div class="d-flex align-items-start justify-content-between mb-2">
+                                            <h4 class="card-title mb-0 fw-bold">{{ booking.event.title }}</h4>
+                                            <span class="status-badge status-{{ booking.status }}">
+                                                {{ booking.get_status_display }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-3" style="font-size: 0.95rem;">
+                                            <div class="mb-2">
+                                                <i class="fas fa-calendar me-2" style="color: var(--accent); width: 20px;"></i>
+                                                <span class="text-muted">{{ booking.event.start_date|date:"l, F d, Y - g:i A" }}</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <i class="fas fa-map-marker-alt me-2" style="color: var(--accent); width: 20px;"></i>
+                                                <span class="text-muted">{{ booking.event.venue }}</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <i class="fas fa-ticket-alt me-2" style="color: var(--accent); width: 20px;"></i>
+                                                <span class="text-muted fw-semibold">{{ booking.quantity }} ticket{{ booking.quantity|pluralize }}</span>
+                                            </div>
+                                            <div>
+                                                <i class="fas fa-hashtag me-2" style="color: var(--accent); width: 20px;"></i>
+                                                <span class="text-muted" style="font-size: 0.85rem;">{{ booking.booking_id }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="text-center mb-3" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); padding: 1.5rem; border-radius: 12px;">
+                                            <div class="fw-bold mb-1" style="font-size: 2rem; color: var(--primary);">Rs. {{ booking.total_amount }}</div>
+                                            <small class="text-muted fw-semibold">Total Amount</small>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <a href="{% url 'bookings:booking_detail' booking.booking_id %}" 
+                                               class="btn btn-primary btn-custom">
+                                                <i class="fas fa-eye me-2"></i>View Details
+                                            </a>
+                                            {% if booking.status == 'confirmed' %}
+                                                <a href="{% url 'bookings:download_tickets' booking.booking_id %}" 
+                                                   class="btn btn-success btn-custom">
+                                                    <i class="fas fa-download me-2"></i>Download Tickets
+                                                </a>
+                                            {% elif booking.status == 'pending' %}
+                                                <a href="{% url 'payments:initiate_payment' booking.booking_id %}" 
+                                                   class="btn btn-warning btn-custom text-white">
+                                                    <i class="fas fa-credit-card me-2"></i>Complete Payment
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <small class="text-muted">
+                                                Booked on {{ booking.created_at|date:"M d, Y" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% empty %}
+        <div class="col-12">
+            <div class="card no-bookings-card text-center py-5">
+                <div style="width: 120px; height: 120px; margin: 0 auto 2rem; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <h3 class="fw-bold mb-3" style="color: var(--primary);">No Bookings Yet</h3>
+                <p class="lead text-muted mb-4" style="max-width: 500px; margin: 0 auto;">You haven't made any bookings yet. Discover amazing events and book your tickets today!</p>
+                <a href="{% url 'events:event_list' %}" class="btn btn-primary btn-lg btn-custom">
+                    <i class="fas fa-search me-2"></i>Explore Events
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Bookings pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

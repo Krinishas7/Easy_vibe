@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - EventBook{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Global adjustments */
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Hero Section */
+.lux-hero {
+    background-color: #f8f9fa;
+}
+.lux-hero h1 {
+    font-size: 2rem;
+    color: #222;
+}
+.lux-hero img {
+    max-width: 80%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+}
+.lux-hero img:hover {
+    transform: scale(1.03);
+}
+.lux-hero .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+.lux-hero .btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Cards */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+}
+
+/* Text colors */
+.text-accent {
+    color:#d4af37 !important;
+}
+
+/* Stats section */
+.display-5 {
+    font-size: 2rem;
+    color: #007bff;
+}
+@media (min-width: 768px) {
+    .display-5 {
+        font-size: 2.5rem;
+    }
+}
+@media (min-width: 1200px) {
+    .display-5 {
+        font-size: 3rem;
+    }
+}
+
+/* Call-to-action */
+.bg-light-cta {
+    background-color: #f0f0f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .lux-hero h1 {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+    .lux-hero p.lead {
+        text-align: center;
+    }
+    .lux-hero .btn-primary {
+        display: block;
+        margin: 0 auto;
+    }
+    .lux-hero img {
+        max-width: 90%;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+    }
+    .hover-lift .card-body {
+        padding: 2rem 1.5rem !important;
+    }
+    .display-5 {
+        font-size: 1.8rem !important;
+    }
+    .lux-hero img {
+        max-width: 95%;
+    }
+}
+
+/* Feature and story cards */
+.card p {
+    font-size: 0.95rem;
+}
+
+/* Logo in mission & vision */
+.mission-logo, .vision-logo {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
+    display: block;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="lux-hero py-5">
+    <div class="container py-5">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-4 fw-bold mb-4 text-dark">About <span class="text-accent">EventVibe</span></h1>
+                <p class="lead text-muted mb-4">
+                    Your premier destination for discovering and booking unforgettable experiences across Nepal.
+                </p>
+                <a href="{% url 'events:event_list' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm mb-3 mb-lg-0">
+                    <i class="fas fa-calendar-alt me-2"></i> Discover Events
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'images/EV.png' %}" 
+                     class="img-fluid rounded-4 shadow" alt="About EventBook">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5 px-3">
+            <h2 class="fw-bold text-dark mb-3">Our Story</h2>
+            <p class="text-muted mx-auto" style="max-width: 700px;">
+                Founded with a vision to revolutionize event experiences in Nepal, EventBook connects people 
+                with extraordinary moments through an effortless booking journey.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-5">
+                        
+                        <div class="icon-circle mb-4">
+                            <i class="bi bi-bullseye"></i>
+                        </div>
+                        
+                        <h4 class="fw-semibold mb-3">Our Mission</h4>
+                        <p class="text-muted">
+                            To connect people with unforgettable experiences by providing 
+                            a seamless, secure, and joyful platform for event discovery and booking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-5">
+                        
+                        <div class="icon-circle mb-4">
+                            <i class="bi bi-eye"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-3">Our Vision</h4>
+                        <p class="text-muted">
+                            To become Nepal’s most trusted and loved event platform — empowering organizers 
+                            and delighting audiences with effortless access to experiences.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5 px-3">
+            <h2 class="fw-bold text-dark mb-3">Why Choose <span class="text-accent">EventBook?</span></h2>
+            <p class="text-muted mx-auto" style="max-width: 700px;">
+                Every feature we build is designed to make your event journey simple, secure, and special.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            {% for item in features %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-lift text-center p-4">
+                    <div class="icon-circle mx-auto mb-3">
+                        <i class="{{ item.icon }} fa-2x"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-3">{{ item.title }}</h5>
+                    <p class="text-muted">{{ item.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-white">
+    <div class="container text-center">
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <h2 class="display-5 fw-bold">10K+</h2>
+                <p class="text-muted">Events Hosted</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="display-5 fw-bold">50K+</</h2>
+                <p class="text-muted">Happy Attendees</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="display-5 fw-bold">500+</h2>
+                <p class="text-muted">Trusted Organizers</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="display-5 fw-bold">20+</h2>
+                <p class="text-muted">Cities Covered</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-light-cta text-center text-dark">
+    <div class="container px-3">
+        <h2 class="fw-bold mb-3">Join Nepal’s Leading Event Community</h2>
+        <p class="lead mb-4">Discover, book, and enjoy events effortlessly with EventBook.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'events:event_list' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm mb-2">
+                <i class="fas fa-calendar-alt me-2"></i> Browse Events
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg rounded-pill mb-2">
+                <i class="fas fa-user-plus me-2"></i> Sign Up Free
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

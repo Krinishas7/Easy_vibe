@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - EventVibe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            background: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .event-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        .event-card h2 {
+            margin: 0 0 15px 0;
+            font-size: 24px;
+        }
+        .event-detail {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 15px;
+        }
+        .event-detail strong {
+            margin-right: 8px;
+        }
+        .booking-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .booking-details h3 {
+            margin-top: 0;
+            color: #667eea;
+            font-size: 18px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .ticket-card {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .ticket-card h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+            font-size: 16px;
+        }
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #856404;
+            font-size: 16px;
+        }
+        .info-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .info-box li {
+            margin: 8px 0;
+            color: #856404;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 20px 0;
+            font-weight: 600;
+            text-align: center;
+        }
+        .footer {
+            background: #f8f9fa;
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .social-links {
+            margin: 15px 0;
+        }
+        .social-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>🎉 Booking Confirmed!</h1>
+            <p>Your tickets for {{ event.title }} are ready</p>
+        </div>
+        
+        <div class="content">
+            <p class="greeting">Dear {{ booking.contact_name }},</p>
+            
+            <p>Thank you for booking with <strong>EventVibe</strong>! Your payment has been successfully processed and your booking is confirmed. We're excited to see you at the event!</p>
+            
+            <div class="event-card">
+                <h2>{{ event.title }}</h2>
+                <div class="event-detail">
+                    <strong>📅 Date:</strong> {{ event.start_date|date:"l, F d, Y" }}
+                </div>
+                <div class="event-detail">
+                    <strong>🕐 Time:</strong> {{ event.start_date|date:"g:i A" }} - {{ event.end_date|date:"g:i A" }}
+                </div>
+                <div class="event-detail">
+                    <strong>📍 Venue:</strong> {{ event.venue }}
+                </div>
+                <div class="event-detail">
+                    <strong>🗺️ Address:</strong> {{ event.address }}
+                </div>
+            </div>
+            
+            <div class="booking-details">
+                <h3>Booking Summary</h3>
+                <div class="detail-row">
+                    <span><strong>Booking ID:</strong></span>
+                    <span>{{ booking.booking_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span><strong>Number of Tickets:</strong></span>
+                    <span>{{ booking.quantity }}</span>
+                </div>
+                <div class="detail-row">
+                    <span><strong>Total Amount Paid:</strong></span>
+                    <span><strong>Rs. {{ booking.total_amount }}</strong></span>
+                </div>
+                <div class="detail-row">
+                    <span><strong>Booking Date:</strong></span>
+                    <span>{{ booking.created_at|date:"F d, Y - g:i A" }}</span>
+                </div>
+            </div>
+            
+            <h3 style="color: #667eea;">Your Tickets</h3>
+            {% for ticket in tickets %}
+            <div class="ticket-card">
+                <h4>🎫 Ticket #{{ forloop.counter }}</h4>
+                <p><strong>Ticket ID:</strong> {{ ticket.ticket_id }}</p>
+                <p><strong>Attendee:</strong> {{ ticket.attendee_name }}</p>
+                <p><strong>Status:</strong> <span style="color: #28a745;">✓ Valid</span></p>
+            </div>
+            {% endfor %}
+            
+            <div class="info-box">
+                <h3>📋 Important Information</h3>
+                <ul>
+                    <li><strong>Your tickets are attached as a PDF to this email</strong> - Please download and save them</li>
+                    <li>You can present either a <strong>printed copy</strong> or show the tickets on your <strong>mobile device</strong></li>
+                    <li>Each ticket has a <strong>unique QR code</strong> for entry verification</li>
+                    <li>Please arrive at least <strong>30 minutes before</strong> the event starts</li>
+                    <li>Tickets are <strong>non-transferable and non-refundable</strong></li>
+                    <li>Keep your Booking ID handy for any inquiries: <strong>{{ booking.booking_id }}</strong></li>
+                </ul>
+            </div>
+            
+            <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+            
+            <center>
+                <p style="margin-top: 30px; color: #667eea; font-size: 16px;">
+                    <strong>See you at the event! 🎉</strong>
+                </p>
+            </center>
+        </div>
+        
+        <div class="footer">
+            <p><strong>EventVibe</strong> - Discover Amazing Events</p>
+            <p>📧 support@eventvibe.com | 📞 +977-1-4444444</p>
+            <div class="social-links">
+                <a href="#">Facebook</a> | 
+                <a href="#">Twitter</a> | 
+                <a href="#">Instagram</a>
+            </div>
+            <p style="margin-top: 15px; font-size: 12px;">
+                This is an automated email. Please do not reply to this message.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

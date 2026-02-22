@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} - EventBook{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Event Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" class="card-img-top" style="height: 400px; object-fit: cover;" alt="{{ event.title }}">
+                {% else %}
+                    <img src="/placeholder.svg?height=400&width=800" class="card-img-top" style="height: 400px; object-fit: cover;" alt="{{ event.title }}">
+                {% endif %}
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-primary fs-6 mb-2">{{ event.category.name }}</span>
+                            <h1 class="card-title display-5 fw-bold">{{ event.title }}</h1>
+                        </div>
+                        <div class="text-end">
+                            <div class="display-6 fw-bold text-success">Rs. {{ event.price }}</div>
+                            <small class="text-muted">per ticket</small>
+                        </div>
+                    </div>
+
+                    <!-- Event Info -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-alt fa-lg text-primary me-3"></i>
+                                <div>
+                                    <strong>Date & Time</strong><br>
+                                    <span class="text-muted">{{ event.start_date|date:"l, F d, Y" }}</span><br>
+                                    <span class="text-muted">{{ event.start_date|date:"g:i A" }} - {{ event.end_date|date:"g:i A" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt fa-lg text-primary me-3"></i>
+                                <div>
+                                    <strong>Venue</strong><br>
+                                    <span class="text-muted">{{ event.venue }}</span><br>
+                                    <span class="text-muted">{{ event.address }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user fa-lg text-primary me-3"></i>
+                                <div>
+                                    <strong>Organizer</strong><br>
+                                    <span class="text-muted">{{ event.organizer.get_full_name|default:event.organizer.username }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-ticket-alt fa-lg text-primary me-3"></i>
+                                <div>
+                                    <strong>Availability</strong><br>
+                                    {% if event.available_tickets > 0 %}
+                                        <span class="text-success">{{ event.available_tickets }} tickets available</span>
+                                    {% else %}
+                                        <span class="text-danger">Sold Out</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-3">About This Event</h3>
+                        <p class="lead">{{ event.description|linebreaks }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow-lg border-0 booking-form">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold mb-4">
+                        <i class="fas fa-ticket-alt me-2"></i>Book Your Tickets
+                    </h4>
+
+                    {% if event.is_available %}
+                        {% if user.is_authenticated %}
+                            <form action="{% url 'bookings:create_booking' event.slug %}" method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="quantity" class="form-label">Number of Tickets</label>
+                                    <select class="form-select" id="quantity" name="quantity" required>
+                                        {% for i in "12345"|make_list %}
+                                            <option value="{{ forloop.counter }}">{{ forloop.counter }} ticket{{ forloop.counter|pluralize }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contact_name" class="form-label">Contact Name</label>
+                                    <input type="text" class="form-control" id="contact_name" name="contact_name"
+                                           value="{{ user.get_full_name }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contact_email" class="form-label">Contact Email</label>
+                                    <input type="email" class="form-control" id="contact_email" name="contact_email"
+                                           value="{{ user.email }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contact_phone" class="form-label">Contact Phone</label>
+                                    <input type="tel" class="form-control" id="contact_phone" name="contact_phone"
+                                           value="{{ user.profile.phone }}" required>
+                                </div>
+
+                                <div class="ticket-preview">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Ticket Price:</span>
+                                        <span>Rs. {{ event.price }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Quantity:</span>
+                                        <span id="selected-quantity">1</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between fw-bold">
+                                        <span>Total Amount:</span>
+                                        <span id="total-amount">Rs. {{ event.price }}</span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-success btn-lg w-100 btn-custom mt-3">
+                                    <i class="fas fa-credit-card me-2"></i>Proceed to Payment
+                                </button>
+                            </form>
+                        {% else %}
+                            <div class="text-center">
+                                <p class="text-muted mb-4">Please login to book tickets for this event.</p>
+                                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100 btn-custom">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login to Book
+                                </a>
+                                <p class="mt-3 small">
+                                    Don't have an account?
+                                    <a href="{% url 'accounts:register' %}" class="text-decoration-none">Register here</a>
+                                </p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center">
+                            {% if event.available_tickets == 0 %}
+                                <i class="fas fa-times-circle fa-3x text-danger mb-3"></i>
+                                <h5 class="text-danger">Sold Out</h5>
+                                <p class="text-muted">This event is completely sold out.</p>
+                            {% elif event.is_past %}
+                                <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                                <h5 class="text-warning">Event Passed</h5>
+                                <p class="text-muted">This event has already ended.</p>
+                            {% else %}
+                                <i class="fas fa-ban fa-3x text-danger mb-3"></i>
+                                <h5 class="text-danger">Not Available</h5>
+                                <p class="text-muted">Booking is not available for this event.</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Event Stats -->
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">Event Statistics</h5>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border-end">
+                                <h4 class="fw-bold text-primary">{{ event.tickets_sold }}</h4>
+                                <small class="text-muted">Tickets Sold</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="fw-bold text-success">{{ event.available_tickets }}</h4>
+                            <small class="text-muted">Available</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Events -->
+    {% if related_events %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="fw-bold mb-4">Related Events</h3>
+            <div class="row">
+                {% for related_event in related_events %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card event-card h-100">
+                        <div class="position-relative">
+                            {% if related_event.image %}
+                                <img src="{{ related_event.image.url }}" class="card-img-top event-image" alt="{{ related_event.title }}">
+                            {% else %}
+                                <img src="/placeholder.svg?height=200&width=300" class="card-img-top event-image" alt="{{ related_event.title }}">
+                            {% endif %}
+                            <div class="price-badge">Rs. {{ related_event.price }}</div>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">{{ related_event.title }}</h6>
+                            <p class="card-text text-muted small flex-grow-1">{{ related_event.description|truncatewords:10 }}</p>
+                            <div class="mt-auto">
+                                <small class="text-muted d-block mb-2">
+                                    <i class="fas fa-calendar me-1"></i>{{ related_event.start_date|date:"M d" }}
+                                </small>
+                                <a href="{{ related_event.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quantitySelect = document.getElementById('quantity');
+    const selectedQuantitySpan = document.getElementById('selected-quantity');
+    const totalAmountSpan = document.getElementById('total-amount');
+    const ticketPrice = {{ event.price }};
+    
+    if (quantitySelect && selectedQuantitySpan && totalAmountSpan) {
+        quantitySelect.addEventListener('change', function() {
+            const quantity = parseInt(this.value);
+            const total = quantity * ticketPrice;
+            selectedQuantitySpan.textContent = quantity;
+            totalAmountSpan.textContent = 'Rs. ' + total.toLocaleString();
+        });
+    }
+});
+</script>
+{% endblock %}
