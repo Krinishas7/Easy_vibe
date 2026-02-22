@@ -22,10 +22,10 @@ from django.utils.html import strip_tags
 # ---------------------------
 # Recipient Email
 # ---------------------------
-RECIPIENT_EMAIL = 'ashimbashyal13@gmail.com'  # <-- change if needed
+RECIPIENT_EMAIL = 'krinishashrestha7@gmail.com'  
 
 # ---------------------------
-# Test Functions
+# Test Function
 # ---------------------------
 
 def test_simple_email():

@@ -20,8 +20,7 @@ app.conf.beat_schedule = {
         'task': 'bookings.tasks.cleanup_expired_bookings',
         'schedule': crontab(minute='*/5'),  # Run every 5 minutes
     },
-}
-
+}   
 @app.task(bind=True)
 def debug_task(self):
     print(f'Request: {self.request!r}')

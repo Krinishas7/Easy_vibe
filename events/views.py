@@ -81,9 +81,7 @@ def event_detail_view(request, slug):
     return render(request, 'events/event_detail.html', context)
 
 
-# ----------------------------------
-# BOOK TICKET (COUNTRY RESTRICTED)
-# ----------------------------------
+
 @login_required
 def book_ticket_view(request, slug):
     event = get_object_or_404(Event, slug=slug, status='published')
@@ -98,9 +96,7 @@ def book_ticket_view(request, slug):
     contact_email = request.POST.get("contact_email")
     contact_phone = request.POST.get("contact_phone")
 
-    # ----------------------------------
-    # COUNTRY CHECK
-    # ----------------------------------
+
     if not event.allow_any_country:
         user_country = getattr(request.user.profile, "country", None)
 
@@ -139,9 +135,7 @@ def book_ticket_view(request, slug):
     return redirect("payments:initiate_payment", booking_id=booking.booking_id)
 
 
-# -------------------------------------
-# ORGANIZER DASHBOARD
-# -------------------------------------
+
 @login_required
 def organizer_dashboard_view(request):
     events = Event.objects.filter(organizer=request.user)

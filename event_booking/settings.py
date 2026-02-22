@@ -154,9 +154,9 @@ EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='ashimbashyal13@gmail.com')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='krinishashrestha7@gmail.com')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='psqjuotsicjoevul')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='EventVibe <ashimbashyal13@gmail.com>')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='EventVibe <krinishashrestha7@gmail.com>')
 
 # Debug emails: print to console
 if DEBUG:
@@ -171,4 +171,4 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Asia/Kathmandu'
+CELERY_TIMEZONE = 'Asia/Kathmandu'  
