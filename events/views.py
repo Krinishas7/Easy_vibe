@@ -8,20 +8,18 @@ from django.http import HttpResponseForbidden
 from .models import Event, Category, SeatType
 from bookings.models import Booking
 from payments.models import Payment
-
+from .services.recommender import get_personalized_recommendations
 
 def home_view(request):
-    featured_events = Event.objects.filter(
-        status='published'
-    ).order_by('-created_at')[:6]
-    
+
+    featured_events = get_personalized_recommendations(request.user)
     categories = Category.objects.all()[:6]
-    
     context = {
         'featured_events': featured_events,
         'categories': categories,
         'title': 'Home'
     }
+
     return render(request, 'events/home.html', context)
 
 
